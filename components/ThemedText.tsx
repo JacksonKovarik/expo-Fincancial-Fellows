@@ -1,11 +1,12 @@
 import { Text, type TextProps, StyleSheet } from 'react-native';
 
 import { useThemeColor } from '@/hooks/useThemeColor';
+import { Colors } from '@/constants/Colors';
 
 export type ThemedTextProps = TextProps & {
   lightColor?: string;
   darkColor?: string;
-  type?: 'default' | 'title' | 'defaultSemiBold' | 'subtitle' | 'link';
+  type?: 'default' | 'title' | 'defaultSemiBold' | 'subtitle' | 'primaryButton' | 'secondaryButton' | 'tertiaryButton';
 };
 
 export function ThemedText({
@@ -25,7 +26,7 @@ export function ThemedText({
         type === 'title' ? styles.title : undefined,
         type === 'defaultSemiBold' ? styles.defaultSemiBold : undefined,
         type === 'subtitle' ? styles.subtitle : undefined,
-        type === 'link' ? styles.link : undefined,
+        type === 'primaryButton' ? styles.primaryButton : undefined,
         style,
       ]}
       {...rest}
@@ -34,25 +35,36 @@ export function ThemedText({
 }
 
 const styles = StyleSheet.create({
+  // Text
   default: {
     fontSize: 16,
     lineHeight: 24,
+    fontFamily: 'jreg'
   },
   defaultSemiBold: {
     fontSize: 16,
     lineHeight: 24,
+    fontFamily: 'jreg',
     fontWeight: '600',
   },
   title: {
-    fontSize: 32,
-    fontWeight: 'bold',
+    fontSize: 35,
+    fontFamily: 'jbold',
     lineHeight: 32,
+    color: Colors.primary
   },
   subtitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontFamily: 'jreg'
   },
-  link: {
+
+  // Buttons
+  primaryButton: {
+    color: Colors.dark.text,
+    fontSize: 26,
+    fontFamily: 'jbold',
+  },
+  tertiaryButton: {
     lineHeight: 30,
     fontSize: 16,
     color: '#0a7ea4',

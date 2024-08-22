@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react'
 import {
   StyleSheet,
   Text,
@@ -8,7 +8,6 @@ import {
   FlatList,
   LogBox,
 } from 'react-native';
-
 //import { PieChart } from "react-native-chart-kit";
 import background from "@/assets/images/Bottom_Background.png"
 
@@ -17,12 +16,15 @@ import { Colors } from '@/constants/Colors';
 import Banner from '@/components/Banner';
 import Loading from '@/components/Loading';
 
+import { PieChart } from 'react-native-gifted-charts';
+
 // Redux
 // import { useSelector } from 'react-redux';
 
 import { Ionicons } from '@expo/vector-icons';
 
 import { useIsFocused } from '@react-navigation/native';
+
 
 
 
@@ -46,11 +48,11 @@ export default function Weekly ({navigation}) {
     const [profit, setProfit] = useState(0);
 
     // States for all of the different budgets
-    const [shopping, setShopping] = useState(0)
-    const [food, setFood] = useState(0);
-    const [rent, setRent] = useState(0);
-    const [bills, setBills] = useState(0);
-    const [fuel, setFuel] = useState(0);
+    const [shopping, setShopping] = useState(100)
+    const [food, setFood] = useState(150);
+    const [rent, setRent] = useState(190);
+    const [bills, setBills] = useState(50);
+    const [fuel, setFuel] = useState(320);
     const [other, setOther] = useState(0);
 
     // Boolean Variable telling app if the refresh button is pressed
@@ -60,50 +62,89 @@ export default function Weekly ({navigation}) {
     const record = [
         {
             name: "Shopping",
-            amount: Number(shopping),
+            value: Number(shopping),
             color: "rgba(131, 167, 234, 1)",
             key: 'shopping',
             icon: 'cart'
         },
         {
             name: "Food & Drink",
-            amount: Number(food),
+            value: Number(food),
             color: "#F00FFF",
             key: 'food',
             icon: 'logo-apple'
         },
         {
             name: "Rent",
-            amount: Number(rent),
+            value: Number(rent),
             color: "red",
             key: 'rent',
             icon: 'home'
         },
         {
             name: "Bills",
-            amount: Number(bills),
+            value: Number(bills),
             color: "#fff000",
             key: 'bills',
             icon: 'cash'
         },
         {
             name: "Fuel",
-            amount: Number(fuel),
+            value: Number(fuel),
             color: "rgb(0, 0, 255)",
             key: 'fuel',
             icon: 'car'
         },
         {
             name: "Other",
-            amount: Number(other),
+            value: Number(other),
             color: "rgb(150, 100, 255)",
             key: 'other',
             icon: 'gift'
         },
     ];
 
+    let list = [
+        {
+            name: 'Income',
+            description: 'Test 1',
+            amount: 30,
+        },
+        {
+            name: 'Shopping',
+            description: 'Test 2',
+            amount: 120
+        },
+        {
+            name: 'Food & Drink',
+            description: 'Test 3',
+            amount: 130,
+        },
+        {
+            name: 'Rent',
+            description: 'Test 4',
+            amount: 100
+        },
+        {
+            name: 'Bills',
+            description: 'Test 5',
+            amount: 30,
+        },
+        {
+            name: 'Fuel',
+            description: 'Test 6',
+            amount: 120
+        },
+        {
+            name: 'Other',
+            description: 'Test 7',
+            amount: 120
+        },
+    ]
+
+    
     // A state to let the app know if piechart should be visible
-    const [pieChartVisible, setPieChartVisible] = useState(false)
+    const [pieChartVisible, setPieChartVisible] = useState(true)
     if (!pieChartVisible)  {
         for (i in record){
             if(record[i].amount > 0) {
@@ -191,9 +232,9 @@ export default function Weekly ({navigation}) {
     function Legend({color, name}) {
         return (    
             <View style={{flex: 1, flexDirection: 'row', alignItems: 'left', }}>
-                <View style={{width: 10, height: 10, backgroundColor: color}}/>
+                <View style={{width: 10, height: 10, backgroundColor: color, borderRadius: 5}}/>
     
-                <Text style={{fontSize: 12, color: Colors.black, }}>  {name}</Text>
+                <Text style={{fontSize: 14, color: Colors.black, fontFamily: 'jit'}}>  {name}</Text>
             </View>
         )
     }
@@ -203,43 +244,59 @@ export default function Weekly ({navigation}) {
             <View style = {{flex: 1, alignItems: 'center'}}>
                 <Banner title={'Weekly'} onRefresh={onRefresh} />
 
+                
+
+
 
                 {/* Where the pie chart is displayed */}
                 { pieChartVisible ? (
                     <View style = {styles.visual}>
-                        {/* <PieChart
+                        <PieChart
                             data={record}
-                            width={300}
-                            height={150}
-                            chartConfig={{
-                                color: (opacity)=> '#000'
+                            donut
+                            showGradient
+                            strokeColor={Colors.lightPrime}
+                            strokeWidth={3}
+                            sectionAutoFocus
+                            radius={75}
+                            innerRadius={60}
+                            innerCircleColor={Colors.lightPrime}
+                            centerLabelComponent={() => {
+                                return (
+                                <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                                    <PieChart
+                                        data={record}
+                                        donut
+                                        showGradient
+                                        strokeColor={Colors.lightPrime}
+                                        strokeWidth={3}
+                                        sectionAutoFocus
+                                        radius={60}
+                                        innerRadius={52}
+                                        innerCircleColor={Colors.lightPrime}
+                                        centerLabelComponent={() => {
+                                            return (
+                                            <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                                                <Text style={{color: '#000', fontFamily: 'jit', fontSize: 18}}>Expenses:</Text>
+                                                <Text style={{color: '#000', fontFamily: 'jit', fontSize: 18}}>$0.00</Text>
+                                            </View>
+                                            );
+                                        }}
+                                        
+                                    />
+                                </View>
+                                );
                             }}
-                            accessor={"amount"}
-                            backgroundColor={"transparent"}
-                            paddingLeft='-10'
-                            avoidFalseZero={true}
-                            center={[17, -5]}
-                            hasLegend={false}
-                            absolute
-                            style={{flex: 1.2}}
-                            keyExtractor={item => item.id}       
-                        /> */}
-
-                        {/* The circle making the pie chart a ring */}
-                        <View style = {styles.circle}>
-                            <Text style={{color: '#000'}}>Total Expenses:</Text>
-                            <Text style={{color: '#000'}}>$0.00</Text>
-                            {/* <Text style={{color: '#000'}}>${weeklyExpenses}</Text> */}
-                        </View>
+                            
+                        />
 
                         {/* Pie chart Legend */}            
-                        <View style={{flex: 1,  alignItems: 'left',}}>
+                        <View style={{flex: 1,  alignItems: 'left', marginLeft: 40}}>
                             {record.map(({name, color}) => {
                                 return <Legend color = {color} name = {name} />
                             })}
                         </View>
 
-                        <Text/>
 
                     </View>
                 ) : (
@@ -251,9 +308,9 @@ export default function Weekly ({navigation}) {
             }
 
 
-                {/* <FlatList 
+                <FlatList 
                     style = {styles.list} 
-                    data={weekly}
+                    data={list}
                     ListEmptyComponent={
                         <View style={{alignItems:'center', justifyContent: 'center', padding: 15}}>
                             <Text style={{fontSize: 18, fontFamily: 'Judson-Regular', color: 'black', textAlign: 'center', marginBottom: 15}}>No Weekly expenses to generate any Modules</Text>
@@ -261,14 +318,15 @@ export default function Weekly ({navigation}) {
                         </View>  
                     }
                     key={item => item.key}
-                    setWeeklyIncome={({item}) => { weeklyIncome + item.amount}}
+                    // setWeeklyIncome={({item}) => { weeklyIncome + item.amount}}
                     renderItem={({item, key}) => {
                         return (
                             <View style={{flexDirection: 'row', height: 70, width: '100%', borderBottomColor: '#000', borderBottomWidth: .5, padding: 15}}>
                                 <View style={{backgroundColor: '#fff', height: 40, width: 40, borderRadius: 40/2, marginRight: 15, alignItems: 'center', justifyContent: 'center'}}>
-                                    <Ionicons icon={item.name == "Income"  ? ('card') : (
+                                    <Ionicons name={item.name == "Income"  ? ('card') : (
                                         record.find((records) => records.name == item.name).icon
-                                    )} size={25}/>
+                                    )} size={25} color={'#000'} />
+                                    {/* <Ionicons name='home' size={25} color={'#000'}/> */}
                                 </View>
                                 <View style={{flexDirection: 'column', justifyContent: 'space-around', width: '60%' }}>
                                     <Text style={{fontFamily: 'Judson-Bold', fontSize: 21, color: '#000'}}>{item.name}</Text>
@@ -280,14 +338,14 @@ export default function Weekly ({navigation}) {
                             </View>
                         )
                     }}
-                /> */}
+                />
 
                     
                 <View style = {[styles.profit, {top: 110}]}>
                     <Text style = {styles.income_text}>Weekly Income:</Text>
                     <Text style = {styles.income_text}>${weeklyIncome}</Text>
                 </View>
-                <View style = {[styles.profit, {top: 330}]}>
+                <View style = {[styles.profit, {top: 347}]}>
                     <Text style = {styles.income_text}>Total Profit:</Text>
                     <Text style = {styles.income_text}>${profit}</Text>
                     
@@ -318,7 +376,8 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         alignItems: 'center',
         justifyContent: 'center',
-        paddingTop: 30,
+        paddingTop: 20,
+        paddingLeft: 10,
         paddingBottom: 20,
     },
     list: {

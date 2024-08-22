@@ -621,7 +621,7 @@ export default function Monthly () {
 
                     <Text style = {styles.profit_text}>$0.00</Text>
                 </View>
-                <View style = {[styles.profit, {top: 330}]}>
+                <View style = {[styles.profit, {top: 347}]}>
                     <Text style = {styles.profit_text}>Total Profit:</Text>
                     {/* <Text style = {styles.profit_text}>${monthlyProfit}</Text> */}
 

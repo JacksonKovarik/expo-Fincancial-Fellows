@@ -80,6 +80,14 @@ export default function DrawerLayout() {
                         
                     }}
                 />
+                <Drawer.Screen
+                    name="weekly"
+                    options={{
+                        drawerLabel: 'Weekly',
+                        title: 'Weekly',
+                        
+                    }}
+                />
             </Drawer>
         </GestureHandlerRootView>
     )

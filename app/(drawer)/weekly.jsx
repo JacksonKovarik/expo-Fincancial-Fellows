@@ -8,7 +8,6 @@ import {
   FlatList,
   LogBox,
 } from 'react-native';
-//import { PieChart } from "react-native-chart-kit";
 import background from "@/assets/images/Bottom_Background.png"
 
 // App components from the 'components' folder
@@ -19,11 +18,14 @@ import Loading from '@/components/Loading';
 import { PieChart } from 'react-native-gifted-charts';
 
 // Redux
-// import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { Ionicons } from '@expo/vector-icons';
 
 import { useIsFocused } from '@react-navigation/native';
+import InfoBox from '@/components/infoBox';
+import ListBox from '@/components/listBox';
+import { setWeekly } from '@/context/slices/user_transactions';
 
 
 
@@ -40,7 +42,8 @@ export default function Weekly ({navigation}) {
     const isFocused = useIsFocused();
 
     // State from redux
-    // const {weekly} = useSelector(state => state.persistTransaction);
+    const {weekly, transactions} = useSelector(state => state.persistTransaction);
+    const dispatch = useDispatch();
 
     // States for all of the information needed on the weekly display
     const [weeklyIncome, setWeeklyIncome] = useState(0);
@@ -48,11 +51,11 @@ export default function Weekly ({navigation}) {
     const [profit, setProfit] = useState(0);
 
     // States for all of the different budgets
-    const [shopping, setShopping] = useState(100)
-    const [food, setFood] = useState(150);
-    const [rent, setRent] = useState(190);
-    const [bills, setBills] = useState(50);
-    const [fuel, setFuel] = useState(320);
+    const [shopping, setShopping] = useState(0)
+    const [food, setFood] = useState(0);
+    const [rent, setRent] = useState(0);
+    const [bills, setBills] = useState(0);
+    const [fuel, setFuel] = useState(0);
     const [other, setOther] = useState(0);
 
     // Boolean Variable telling app if the refresh button is pressed
@@ -104,115 +107,118 @@ export default function Weekly ({navigation}) {
         },
     ];
 
-    let list = [
-        {
-            name: 'Income',
-            description: 'Test 1',
-            amount: 30,
-        },
-        {
-            name: 'Shopping',
-            description: 'Test 2',
-            amount: 120
-        },
-        {
-            name: 'Food & Drink',
-            description: 'Test 3',
-            amount: 130,
-        },
-        {
-            name: 'Rent',
-            description: 'Test 4',
-            amount: 100
-        },
-        {
-            name: 'Bills',
-            description: 'Test 5',
-            amount: 30,
-        },
-        {
-            name: 'Fuel',
-            description: 'Test 6',
-            amount: 120
-        },
-        {
-            name: 'Other',
-            description: 'Test 7',
-            amount: 120
-        },
-    ]
 
     
     // A state to let the app know if piechart should be visible
-    const [pieChartVisible, setPieChartVisible] = useState(true)
-    if (!pieChartVisible)  {
-        for (i in record){
-            if(record[i].amount > 0) {
-                setPieChartVisible(true)
-            }
-        }
-    }
+    const [pieChartVisible, setPieChartVisible] = useState(false)
+    // const chart = () => {
+    //     if(weekly.length != 0){
+    //         setPieChartVisible(true);
+    //     }else {
+    //         setPieChartVisible(false)
+    //     }
+    // }
 
 /*************************************************************************************/
 //                      Functions for the Weekly tab
 /*************************************************************************************/
 
+const fetchWeekly = () => {
+        
+    if(transactions.length > 0){
+        let week = []
+        console.log("In weekly")
+        // Looks at the most recent transactions and puts all of the transactions from the current week in the 'weekly' array
+        for(i=transactions.length-1; i >= 0; i--) {
+            const currentTrans = transactions[i];
+            if (i > 0) {
+                const nextTrans = transactions[i-1];
+                
+                const LDM = currentTrans.dayOfWeek - currentTrans.dayOfMonth
+                const diff1 = currentTrans.dayOfMonth - nextTrans.dayOfMonth
+
+                if ((currentTrans.month == nextTrans.month) && ((nextTrans.dayOfWeek <= currentTrans.dayOfWeek) && (diff1 < 7))) {
+                    week.push(currentTrans)
+                }else if (((currentTrans.month == nextTrans.month+1) && (LDM > 0) && (nextTrans.dayOfWeek <= currentTrans.dayOfWeek))) {
+                    week.push(currentTrans)
+                }else {
+                    week.push(currentTrans)
+                    break
+                }
+            }else {
+                week.push(currentTrans)
+            }
+            
+        }
+        console.log(weekly)
+        dispatch(setWeekly(week));
+        setPieChartVisible(true);
+        fetchStats();
+        console.log(weekly)
+    }else {
+        dispatch(setWeekly([]));
+        setPieChartVisible(false);
+    }
+}
+
     // Retrieves needed weekly information from the transactions
-    // const fetchStats = () => {
-    //     let shop = 0
-    //     let gas = 0
-    //     let bill = 0
-    //     let ren = 0
-    //     let foo = 0
-    //     let oth = 0
-    //     for(i in weekly){
-    //         let Name = weekly[i].name
-    //         let Amount = weekly[i].amount
+    const fetchStats = () => {
+        if(weekly.length != 0){
+            let shop = 0
+            let gas = 0
+            let bill = 0
+            let ren = 0
+            let foo = 0
+            let oth = 0
+            for(i in weekly){
+                let Name = weekly[i].name
+                let Amount = weekly[i].amount
 
-    //         if('Shopping' == Name){
-    //             shop -= Amount
-    //             setShopping(shop)
-    //         }else if('Fuel' == Name){
-    //             gas -= Amount
-    //             setFuel(gas)
-    //         }else if('Rent' == Name){
-    //             ren -= Amount
-    //             setRent(ren)
-    //         }else if('Bills' == Name){
-    //             bill -= Amount
-    //             setBills(bill)
-    //         }else if('Food & Drink' == Name){
-    //             foo -= Amount
-    //             setFood(foo)
-    //         }else if(('Other' || null) == Name){
-    //             oth -= Amount
-    //             weekly[i].name = 'Other'
-    //             setOther(oth)
-    //         }
-    //     }
+                if('Shopping' == Name){
+                    shop -= Amount
+                    setShopping(shop)
+                }else if('Fuel' == Name){
+                    gas -= Amount
+                    setFuel(gas)
+                }else if('Rent' == Name){
+                    ren -= Amount
+                    setRent(ren)
+                }else if('Bills' == Name){
+                    bill -= Amount
+                    setBills(bill)
+                }else if('Food & Drink' == Name){
+                    foo -= Amount
+                    setFood(foo)
+                }else if(('Other' || null) == Name){
+                    oth -= Amount
+                    weekly[i].name = 'Other'
+                    setOther(oth)
+                }
+            }
 
-    //     //console.log(weekly)
+            //console.log(weekly)
 
-    //     let prof = 0
-    //     let inc = 0
-    //     let exp = 0
-    //     for(i in weekly) {
-    //         prof += weekly[i].amount
-    //         if (weekly[i].amount > 0) {
-    //             inc += weekly[i].amount
-    //         }else {
-    //             exp -= weekly[i].amount
-    //         }
-    //     }
-    //     setProfit(prof);        
-    //     setWeeklyIncome(inc);
-    //     setWeeklyExpenses(exp)
-    // }
+            let prof = 0
+            let inc = 0
+            let exp = 0
+            for(i in weekly) {
+                prof += weekly[i].amount
+                if (weekly[i].amount > 0) {
+                    inc += weekly[i].amount
+                }else {
+                    exp -= weekly[i].amount
+                }
+            }
+            setProfit(prof);        
+            setWeeklyIncome(inc);
+            setWeeklyExpenses(exp)
+        }
+    }
 
     // Refreshes the screens to fetch new stats
     const onRefresh = () => {
         setRefresh(true);
-        // fetchStats();
+        fetchStats();
         setTimeout ( () => {
             setRefresh(false)
         }, 500)
@@ -222,7 +228,8 @@ export default function Weekly ({navigation}) {
     // Calls the 'fetchStats' function when the screen is focused
     useEffect(() => {
         if (isFocused) {
-            // fetchStats();
+            fetchStats();
+            fetchWeekly();
         }
             
     }, [isFocused])
@@ -250,7 +257,7 @@ export default function Weekly ({navigation}) {
 
                 {/* Where the pie chart is displayed */}
                 { pieChartVisible ? (
-                    <View style = {styles.visual}>
+                    <InfoBox>
                         <PieChart
                             data={record}
                             donut
@@ -276,10 +283,10 @@ export default function Weekly ({navigation}) {
                                         innerCircleColor={Colors.lightPrime}
                                         centerLabelComponent={() => {
                                             return (
-                                            <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                                                <Text style={{color: '#000', fontFamily: 'jit', fontSize: 18}}>Expenses:</Text>
-                                                <Text style={{color: '#000', fontFamily: 'jit', fontSize: 18}}>$0.00</Text>
-                                            </View>
+                                                <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                                                    <Text style={{color: '#000', fontFamily: 'jit', fontSize: 18}}>Expenses:</Text>
+                                                    <Text style={{color: '#000', fontFamily: 'jit', fontSize: 18}}>${weeklyExpenses}</Text>
+                                                </View>
                                             );
                                         }}
                                         
@@ -298,47 +305,49 @@ export default function Weekly ({navigation}) {
                         </View>
 
 
-                    </View>
+                    </InfoBox>
                 ) : (
-                    <View style={[styles.visual, {flexDirection: 'column'}]}> 
+                    <InfoBox otherStyles={{flexDirection: 'column'}}> 
                         <Text style = {{color: 'black', fontSize: 20, fontFamily: 'Judson-Regular'}}>An expense visual will show here</Text>
                         <Text style = {{color: 'black', fontSize: 20, fontFamily: 'Judson-Regular', textAlign: 'center'}}>There are no expense transactions for this week</Text>
-                    </View>
+                    </InfoBox>
                 )
             }
 
-
-                <FlatList 
-                    style = {styles.list} 
-                    data={list}
-                    ListEmptyComponent={
-                        <View style={{alignItems:'center', justifyContent: 'center', padding: 15}}>
-                            <Text style={{fontSize: 18, fontFamily: 'Judson-Regular', color: 'black', textAlign: 'center', marginBottom: 15}}>No Weekly expenses to generate any Modules</Text>
-                            <Loading/>
-                        </View>  
-                    }
-                    key={item => item.key}
-                    // setWeeklyIncome={({item}) => { weeklyIncome + item.amount}}
-                    renderItem={({item, key}) => {
-                        return (
-                            <View style={{flexDirection: 'row', height: 70, width: '100%', borderBottomColor: '#000', borderBottomWidth: .5, padding: 15}}>
-                                <View style={{backgroundColor: '#fff', height: 40, width: 40, borderRadius: 40/2, marginRight: 15, alignItems: 'center', justifyContent: 'center'}}>
-                                    <Ionicons name={item.name == "Income"  ? ('card') : (
-                                        record.find((records) => records.name == item.name).icon
-                                    )} size={25} color={'#000'} />
-                                    {/* <Ionicons name='home' size={25} color={'#000'}/> */}
+                <ListBox>
+                    <FlatList 
+                        style = {{width: '100%'}} 
+                        data={weekly}
+                        ListEmptyComponent={
+                            <View style={{alignItems:'center', justifyContent: 'center', padding: 15}}>
+                                <Text style={{fontSize: 18, fontFamily: 'Judson-Regular', color: 'black', textAlign: 'center', marginBottom: 15}}>No Weekly expenses to generate any Modules</Text>
+                                <Loading/>
+                            </View>  
+                        }
+                        key={item => item.key}
+                        setWeeklyIncome={({item}) => { weeklyIncome + item.amount}}
+                        renderItem={({item, key}) => {
+                            return (
+                                <View style={{flexDirection: 'row', height: 70, width: '100%', borderBottomColor: '#000', borderBottomWidth: .5, padding: 15}}>
+                                    <View style={{backgroundColor: '#fff', height: 40, width: 40, borderRadius: 40/2, marginRight: 15, alignItems: 'center', justifyContent: 'center'}}>
+                                        <Ionicons name={item.name == "Income"  ? ('card') : (
+                                            record.find((records) => records.name == item.name).icon
+                                        )} size={25} color={'#000'} />
+                                        {/* <Ionicons name='home' size={25} color={'#000'}/> */}
+                                    </View>
+                                    <View style={{flexDirection: 'column', justifyContent: 'space-around', width: '60%' }}>
+                                        <Text style={{fontFamily: 'Judson-Bold', fontSize: 21, color: '#000'}}>{item.name}</Text>
+                                        <Text style={{fontFamily: 'Judson-regular', fontSize: 12, color: '#555'}}>{item.description}</Text>
+                                    </View>
+                                    <View style={{alignItems: 'center', justifyContent: 'center', width: '25%'}}>
+                                        <Text style={{fontFamily: 'Judson-Bold', fontSize: 21, color: '#000'}}>${item.amount}</Text>
+                                    </View>
                                 </View>
-                                <View style={{flexDirection: 'column', justifyContent: 'space-around', width: '60%' }}>
-                                    <Text style={{fontFamily: 'Judson-Bold', fontSize: 21, color: '#000'}}>{item.name}</Text>
-                                    <Text style={{fontFamily: 'Judson-regular', fontSize: 12, color: '#555'}}>{item.description}</Text>
-                                </View>
-                                <View style={{alignItems: 'center', justifyContent: 'center', width: '25%'}}>
-                                    <Text style={{fontFamily: 'Judson-Bold', fontSize: 21, color: '#000'}}>${item.amount}</Text>
-                                </View>
-                            </View>
-                        )
-                    }}
-                />
+                            )
+                        }}
+                    />
+                </ListBox>    
+                
 
                     
                 <View style = {[styles.profit, {top: 110}]}>
@@ -357,39 +366,6 @@ export default function Weekly ({navigation}) {
 }
 
 const styles = StyleSheet.create({
-    banner: {
-        flexDirection: 'row',
-        height: '16%',
-        width: '100%',
-        backgroundColor: Colors.primary,
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderBottomLeftRadius: 30,
-        borderBottomRightRadius: 30,
-    },
-    visual: {
-        flexDirection: 'row',
-        height: '25%',
-        width: '85%',
-        backgroundColor: Colors.lightPrime,
-        marginTop: 20,
-        borderRadius: 20,
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingTop: 20,
-        paddingLeft: 10,
-        paddingBottom: 20,
-    },
-    list: {
-        height: '55%',
-        width: '85%',
-        marginTop: 45,
-        borderRadius: 20,
-        backgroundColor: Colors.lightPrime,
-        borderTopRightRadius: 25,
-        borderTopLeftRadius: 25,
-        flexDirection: 'column'
-    },
     add: {
         height: '90%',
         width: '45%',

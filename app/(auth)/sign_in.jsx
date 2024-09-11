@@ -4,6 +4,7 @@ import {
   View,
   TouchableOpacity,
   SafeAreaView,
+  Alert,
 } from 'react-native';
 
 // Utilities from 'utils' folder
@@ -18,12 +19,12 @@ import { Colors } from '@/constants/Colors';
 import {useForm} from 'react-hook-form'
 
 // Friebase
-// import { signInWithEmailAndPassword } from 'firebase/auth';
-// import { auth } from '../../../config/firebase';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '@/config/firebase';
 
 // Redux
-// import { useDispatch, useSelector } from 'react-redux';
-// import { setUserLoading } from '../../redux/slices/user_information';
+import { useDispatch, useSelector } from 'react-redux';
+import { setUserLoading } from '@/context/slices/user_information';
 
 // FontAwesome images
 // import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'; 
@@ -35,29 +36,33 @@ import { router } from 'expo-router';
 export default function Sign_In(){
 
   // Redux
-//   const {userLoading} = useSelector(state => state.user)
-//   const dispatch = useDispatch();
+  const {userLoading} = useSelector(state => state.user)
+  const dispatch = useDispatch();
 
   // React-Hook-Form
   const {control, handleSubmit} = useForm();
 
   // Handles the 'Sign-In' button press
-//   onSignInPress = async (data) => {
+  const onSignInPress = async (data) => {
     
-//     dispatch(setUserLoading(true));
-//     try{
-//       await signInWithEmailAndPassword(auth, data.email, data.password);
-//     }catch(err) {
-//       if(err.code === 'auth/invalid-credential'){
-//         Alert.alert("Error:", "Invalid email or password")
-//       }else {
-//         console.log(err)
-//       }
-//     }
-//     dispatch(setUserLoading(false));  
-//   }
+    dispatch(setUserLoading(true));
+    try{
+      console.log("In")
+      await signInWithEmailAndPassword(auth, data.email, data.password);
+      Alert.alert("Success", "You did it!")
+      console.log("passed")
+    }catch(err) {
+      console.log(err.code)
+      if(err.code === 'auth/invalid-credential'){
+        Alert.alert("Error:", "Invalid email or password")
+      }else {
+        console.log(err)
+      }
+    }
+    dispatch(setUserLoading(false));  
+  }
 
-    const onSignInPress = () => {
+    const onSignInInPress = () => {
         console.log("Passed")
         router.push('/monthly')
     }
@@ -114,7 +119,7 @@ export default function Sign_In(){
             </Text>
         </TouchableOpacity>
 
-        {/* {
+        {
           userLoading ? (
             <Loading />
           ) : (
@@ -124,9 +129,9 @@ export default function Sign_In(){
               type='PRIMARY'
             />
           )
-        } */}
+        }
         <CustomButton
-            onPress={onSignInPress}
+            onPress={onSignInInPress}
             value = 'Sign In'
             type='SECONDARY'
         />

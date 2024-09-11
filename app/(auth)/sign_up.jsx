@@ -9,13 +9,13 @@ import {
   Platform,
   Keyboard,
   TouchableWithoutFeedback,
+  Alert,
 } from 'react-native';
 
 // Imported Utilities
 import Top_Circle from "@/components/TopCircles";
 import Bottom_Circle from "@/components/BottomCircles"
-// import CustomButton from '../../utils/CustomButton';
-// import CustomInput from '../../utils/CustomInput';
+
 import Loading from '@/components/Loading';
 import { Colors } from '@/constants/Colors';
 import CustomButton from '@/components/CustomButton';
@@ -26,12 +26,12 @@ import {useForm} from 'react-hook-form'
 import { router } from 'expo-router';
 
 // // Firebase
-// import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
-// import { auth } from '../../../config/firebase';
+import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+import { auth } from '@/config/firebase';
 
 // // Redux
-// import { useDispatch, useSelector } from 'react-redux';
-// import { setUserLoading } from '../../redux/slices/user_information';
+import { useDispatch, useSelector } from 'react-redux';
+import { setUserLoading, setUser } from '@/context/slices/user_information';
 
 
 
@@ -47,32 +47,30 @@ export default function Sign_Up(){
   const pwd = watch('password');
 
   // Redux states
-//   const {userLoading} = useSelector(state => state.user)
-//   const dispatch = useDispatch();
+  const {userLoading, user} = useSelector(state => state.user)
+  const dispatch = useDispatch();
 
 
   // Handles the 'Sign-Up' buttoon press
-//   const onSignUpPressed = async (data) => {
-//     dispatch(setUserLoading(true));
-//     try{
-//       await createUserWithEmailAndPassword(auth, data.email, data.password)
-//     }catch (err) {
-//       if(err.code === 'auth/email-already-in-use'){
-//         Alert.alert("Error:", "Account already exists")
-//       }else {
-//         Alert.alert("Error:", "Something went wrong, please try again")
-//       }
-//       console.log(err)
-//     }
-    
-//     dispatch(setUserLoading(false));
-//   }
-
-    // const keyboard = Keyboard.addListener()
-
-    const onSignUpPressed = () => {
-        console.log('Passed')
+  const onSignUpPressed = async (data) => {
+    dispatch(setUserLoading(true));
+    try{
+      console.log("Made it\n" + data.email + "\n" + data.password)
+      await createUserWithEmailAndPassword(auth, data.email, data.password);
+      setUser(data)
+      console.log(user)
+    }catch (err) {
+      if(err.code === 'auth/email-already-in-use'){
+        Alert.alert("Error:", "Account already exists")
+      }else {
+        Alert.alert("Error:", "Something went wrong, please try again")
+      }
+      console.log(err)
     }
+    
+    dispatch(setUserLoading(false));
+  }
+
 
   // Navigates to Sign-In page if 'Sign-In' button is pressed
     const onSignInPressed = () => {
@@ -132,7 +130,7 @@ export default function Sign_Up(){
           secureTextEntry
         />
 
-        {/* {
+        {
           userLoading ? (
             <Loading />
           ) : (
@@ -142,13 +140,13 @@ export default function Sign_Up(){
               type='PRIMARY'
             /> 
           )
-        } */}
+        }
 
-        <CustomButton
+        {/* <CustomButton
           value = 'Welcome'
           onPress = {onSignInPressed}
           type='PRIMARY'
-        /> 
+        />  */}
 
         <View style = {styles.horizontal}>
           <Text style = {styles.text}>

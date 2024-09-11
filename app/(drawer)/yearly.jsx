@@ -10,14 +10,20 @@ import {
 } from "react-native";
 import background from "@/assets/images/Bottom_Background.png"
 import { Colors } from "@/constants/Colors";
-import { LineChart } from "react-native-gifted-charts";
+import { LineChart, LineChartBicolor } from "react-native-gifted-charts";
 import Loading from "@/components/Loading";
+import InfoBox from '@/components/infoBox';
+import ListBox from '@/components/listBox';
+
+
 import { useIsFocused } from "@react-navigation/native";
 
 // Redux
-// import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import Banner from "@/components/Banner";
+import { setYearly } from "@/context/slices/user_transactions";
+import { LinearGradient } from "expo-linear-gradient";
 
  
 
@@ -36,8 +42,10 @@ export default function Years ({navigation}) {
     const ref = useRef(null)
 
     // Information needed for the linechart and screen data
+    const [max, setMax] = useState(0)
     const [nums, setNums] = useState([])
     const [monthVals, setMonthVals] = useState([])
+    const [completeData, setCompleteData] = useState([])
     const [yearlyIncome, setYearlyIncome] = useState(0)
     const [yearlyProfit, setYearlyProfit] = useState(0)
     const [chartVisible, setChartVisible] = useState(false)
@@ -48,15 +56,12 @@ export default function Years ({navigation}) {
     // List of the month names
     const months = ["Jan","Feb","Mar","Apr","May","June","July","Aug","Sep","Oct","Nov","Dec"];
 
-    // States via redux containing the current month and past month information
-    // const {currentMonthTrans, pastMonths} = useSelector(state => state.persistedReducer)
-    // const dispatch = useDispatch()
+
+    // States via redux information
+    const {yearly, transactions} = useSelector(state => state.persistTransaction)
+    const {currentMonthTrans, pastMonths} = useSelector(state => state.persistedReducer)
+    const dispatch = useDispatch()
     
-    const currentMonthTrans = [{
-        month: 'August',
-        saved: '40%',
-        amount: 4000
-    }]
 
 /*************************************************************************************/
 //                      Functions for the Yearly tab
@@ -64,7 +69,7 @@ export default function Years ({navigation}) {
 
     // Function for retriving data needed from the 'currentMonthTrans' and 'pastMonths' state variables
     // const fetchData = () => {
-    //     //console.log(pastMonths.length)
+    //     // console.log(pastMonths.length)
     //     if(pastMonths.length > 0) {
     //         let vals = [];
     //         let amt = [];
@@ -83,6 +88,7 @@ export default function Years ({navigation}) {
     //             setMonthVals(vals.reverse());
     //             setNums(amt.reverse());
     //             done=true
+    //             console.log(nums)
     //         }
             
     //         let currMonth = currentMonthTrans[0].month;
@@ -98,7 +104,6 @@ export default function Years ({navigation}) {
     //         let amt = [];
     //         let currMonth = currentMonthTrans[0].month;
     //         let currAmt = currentMonthTrans[0].amount;
-            
     //         vals.push(months[currMonth]);
     //         amt.push(currAmt);
 
@@ -108,18 +113,17 @@ export default function Years ({navigation}) {
     //             amt.push(0);
     //             newMonth -= 1;
     //         }
-    //         //console.log(amt)
+    //         // console.log(amt)
     //         setMonthVals(vals.reverse());
     //         setNums(amt.reverse());
             
     //     };  
-
     //     if(currentMonthTrans.length > 0) {
     //         setChartVisible(true)
     //     }else {
     //         setChartVisible(false)
     //     }
-    //     //console.log(nums)
+    //     console.log(nums)
     //     let newNums = 0
     //     for(i in nums) {
     //         newNums += nums[i]
@@ -135,10 +139,110 @@ export default function Years ({navigation}) {
     //     // console.log(yearlyIncome)
     // }
 
+    const fetchYearly = () => {
+        if(transactions.length > 0){
+            console.log("In yearly");
+            // console.log(pastMonths.length)
+            if(pastMonths.length > 0) {
+                let vals = [];
+                let amt = [];
+                let last = 0;
+                //console.log(currentMonthTrans)
+                let done = false;
+                while(!done){
+                    
+                    amt.push(currentMonthTrans[0].amount)
+                    vals.push(months[currentMonthTrans[0].month])
+                    pastMonths.forEach((result) => {
+                        vals.unshift(months[result.month])
+                        amt.unshift(result.amount)
+                        {vals.length > 6 && (done=true)}
+                        last = result.month
+                    })
+                
+                    setMonthVals(vals);
+                    setNums(amt);
+                    done=true
+                    // console.log(nums)
+                }
+                
+                let newMonth = last - 1;
+                console.log(newMonth, months[newMonth])
+                while(newMonth > -1) {
+                    
+                    vals.unshift(months[newMonth]);
+                    amt.unshift(0);
+                    newMonth -= 1;
+                }
+                
+            }else if(currentMonthTrans.length > 0) {
+                let vals = [];
+                let amt = [];
+                let currMonth = currentMonthTrans[0].month;
+                let currAmt = currentMonthTrans[0].amount;
+                vals.push(months[currMonth]);
+                amt.push(currAmt);
+
+                let newMonth = currMonth -1;
+                while(newMonth > -1) {
+                    vals.push(months[newMonth]);
+                    amt.push(0);
+                    newMonth -= 1;
+                }
+                // console.log(amt)
+                setMonthVals(vals.reverse());
+                setNums(amt.reverse());
+                
+            };  
+            
+            let len = nums.length;
+            let fullData = []
+            let i=0
+            while(i<len){
+                fullData.push({label: monthVals[i], value: nums[i] })
+                i += 1
+            }
+            if(fullData.length != 0) {
+                console.log("Full", fullData)
+                dispatch(setYearly(fullData));
+                setChartVisible(true)
+            }
+            console.log(yearly)
+
+            let newNums = 0
+            for(i in nums) {
+                newNums += nums[i]
+            }
+            setYearlyProfit(newNums)
+            // console.log(yearlyProfit)
+
+            let newInc = 0
+            for (i in currentMonthTrans) {
+                newInc += currentMonthTrans[i].income
+            }
+            setYearlyIncome(newInc)
+        }else {
+            dispatch(setYearly([]));
+        }
+    }
+
+    const setData = () => {
+        let i = yearly.length-1;
+        while(i > -1){
+            if(Math.abs(yearly[i].value) > max){
+                setMax(Math.abs(yearly[i].value));
+            }
+            console.log(max);
+            i -= 1;
+        }
+    }
+
+
     // Refreshes the screens to fetch new stats
     const onRefresh = () => {
         setRefresh(true);
-        // fetchData();
+        fetchYearly();
+        setData();
         setTimeout ( () => {
             setRefresh(false)
         }, 500)
@@ -147,197 +251,101 @@ export default function Years ({navigation}) {
     // Calls 'fetchData()' when screen is focused
     useEffect(() => {
         if (isFocused) {
-            // fetchData();
+            fetchYearly();
+            setData();
         }
     }, [isFocused])
 
-    // Fill in line chart data
-    const latestData = [
+    const list = [
         {
-          value: 100,
-          customDataPoint: dPoint,
+            label: 'Jan',
+            value: 10
         },
         {
-          value: 120,
-          hideDataPoint: true,
+            label: 'Feb',
+            value: 15
         },
         {
-          value: 210,
-          customDataPoint: dPoint,
+            label: 'Mar',
+            value: 5
         },
         {
-          value: 250,
-          hideDataPoint: true,
+            label: 'Apr',
+            value: 20
         },
         {
-          value: 320,
-          customDataPoint: dPoint,
+            label: 'May',
+            value: 10
         },
         {
-          value: 310,
-          hideDataPoint: true,
+            label: 'June',
+            value: 15
         },
         {
-          value: 270,
-          customDataPoint: dPoint,
+            label: 'July',
+            value: 5
         },
         {
-          value: 240,
-          hideDataPoint: true,
+            label: 'Aug',
+            value: 20
         },
-        {
-          value: 130,
-          customDataPoint: dPoint,
-        },
-        {
-          value: 120,
-          hideDataPoint: true,
-        },
-        {
-          value: 100,
-          customDataPoint: dPoint,
-        },
-        {
-          value: 210,
-          hideDataPoint: true,
-        },
-        {
-          value: 270,
-          customDataPoint: dPoint,
-        },
-        {
-          value: 240,
-          hideDataPoint: true,
-        },
-        {
-          value: 120,
-          hideDataPoint: true,
-        },
-        {
-          value: 100,
-          customDataPoint: dPoint,
-        },
-        {
-          value: 210,
-          customDataPoint: dPoint,
-        },
-        {
-          value: 20,
-          hideDataPoint: true,
-        },
-        {
-          value: 100,
-          customDataPoint: dPoint,
-        },
-      ];
+    ]
+      
 
-      const dPoint = () => {
-        return (
-          <View
-            style={{
-              width: 14,
-              height: 14,
-              backgroundColor: 'white',
-              borderWidth: 3,
-              borderRadius: 7,
-              borderColor: '#07BAD1',
-            }}
-          />
-        );
-      };
-
-    
     return (    
     <ImageBackground source={background} style={{flex:1, justifyContent: 'center'}}>
         <View style = {{flex: 1, alignItems: 'center',}}>
-                <Banner title={'Yearly'} />
+            <Banner title={'Yearly'} onRefresh={onRefresh}/>
 
             {/* Where the line chart is displayed */}
-            <View style = {styles.visual}>
-                { !chartVisible ? (
-                    // <LineChart
-                    //     data={{
-                    //         labels: monthVals,
-                    //         datasets: [
-                    //             {
-                    //                 data: nums
-                    //             }
-                    //         ]
-                    //     }}
-                    //     width={300} 
-                    //     height={120}
-                    //     yAxisLabel="$"
-                    //     yAxisInterval={1} // optional, defaults to 1
-                    //     withHorizontalLabels= {true}
-                    //     withVerticalLabels={true}
-                        
-                    //     chartConfig={{
-                    //         backgroundColor: COLORS.primary,
-                    //         backgroundGradientFrom: COLORS.lightPrime,
-                    //         backgroundGradientTo: COLORS.lightPrime,
-                    //         //decimalPlaces: 2, // optional, defaults to 2dp
-                    //         color: (opacity = 1) => `rgba(0, 180, 0, ${opacity})`,
-                    //         labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-                    //         propsForVerticalLabels: {
-                    //             fontSize: 12,
-                    //         },
-                    //         style: {
-                    //             borderRadius: 16,
-                    //         },
-                    //         propsForDots: {
-                    //             r: "4",
-                    //             strokeWidth: "2",
-                    //         },
-                        
-                    //     }}
-                    //     bezier
-                    //     style={{
-                    //         marginVertical: 8,
-                    //         borderRadius: 16,
-                    //         paddingBottom: 15
-                    //     }}
-                    
-                    // />
+            <InfoBox>
+                { chartVisible ? (
                     <LineChart
                         width={250}
-                        height={125}
+                        height={75}
+                        spacing={30}
+                        maxValue={max}
                         isAnimated
                         thickness={3}
                         color="#05f000"
-                        maxValue={400}
+                        colorNegative="red"
+                        startFillColorNegative="red"
                         noOfSections={3}
+                        noOfSectionsBelowXAxis={3}
                         animateOnDataChange
                         animationDuration={1000}
                         onDataChangeAnimationDuration={300}
                         areaChart
+                        // showVerticalLines
                         yAxisTextStyle={{color: 'black', fontFamily: 'jreg'}}
-                        data={latestData}
+                        xAxisLabelTextStyle={{color: 'black', fontFamily: 'jreg'}}
+                        data={yearly}
                         hideDataPoints
                         startFillColor={"#05f000"}
-                        // endFillColor={'rgb(84,219,234)'}
+
+                        endFillColor={'rgb(84,219,234)'}
                         startOpacity={0.4}
                         endOpacity={0.1}
-                        spacing={15}
-                        // backgroundColor="#414141"
                         hideRules
                         rulesColor="lightgray"
                         rulesType="solid"
-                        initialSpacing={0}
+                        initialSpacing={10}
                         yAxisColor="lightgray"
                         xAxisColor="lightgray"
                         scrollRef={ref}
-                        />
+                        
+                    />
                 ) : (
                     <View style={{alignItems:'center', justifyContent: 'center'}}>
                         <Text style={{fontSize: 21, fontFamily: 'jreg', color: 'black', textAlign: 'center'}}>Not enough data from the year to produce a Graph</Text>
                     </View>
                 )}
-            </View>
+            </InfoBox>
 
             <View style={{marginTop: 40, width: '80%'}}>
                 <Text style = {{textAlign: 'left', color: 'black'}}>Current Month</Text>
             </View>
-            <View style={{width: '85%', backgroundColor: Colors.lightPrime, borderRadius: 15, marginTop: 10}}>
+            <LinearGradient colors={[Colors.primary, Colors.lightPrime]} style={{width: '85%', borderRadius: 15, marginTop: 10}}>
                 {currentMonthTrans.length > 0 ? (
                     <View style={{flexDirection: 'row', height: 70, width: '100%', padding: 15}}>
                         <View style={{backgroundColor: currentMonthTrans[0].amount < 0 ? ('red') : ('green'), height: 40, width: 40, borderRadius: 40/2, marginRight: 15, alignItems: 'center', justifyContent: 'center'}}/>                            
@@ -355,37 +363,39 @@ export default function Years ({navigation}) {
                     </View>
                 )}
                 
-            </View>
+            </LinearGradient>
 
             <View style={{marginTop: 15, width: '80%'}}>
                 <Text style = {{textAlign: 'left', color: 'black'}}>Past Months</Text>
             </View>
 
-            {/* <FlatList 
-                style = {styles.list} 
-                data={pastMonths}
-                ListEmptyComponent={
-                    <View style={{alignItems:'center', justifyContent: 'center', padding: 15}}>
-                        <Text style={{fontSize: 18, fontFamily: 'jreg', color: 'black', textAlign: 'center', marginBottom: 15}}>Not Enough Data</Text>
-                        <Loading/>
-                    </View>  
-                }
-                keyExtractor={item => item.id}
-                renderItem={({item}) => {
-                    return (
-                        <View style={{flexDirection: 'row', height: 70, width: '100%', borderBottomColor: '#000', borderBottomWidth: .5, padding: 15}}>
-                            <View style={{backgroundColor: item.amount < 0 ? ('red') : ('green'), height: 40, width: 40, borderRadius: 40/2, marginRight: 15, alignItems: 'center', justifyContent: 'center'}}/>
-                            <View style={{flexDirection: 'column', justifyContent: 'space-around', width: '60%' }}>
-                                <Text style={{fontFamily: 'jbold', fontSize: 21, color: '#000'}}>{months[item.month]}</Text>
-                                <Text style={{fontFamily: 'jreg', fontSize: 12, color: '#555'}}>{item.description}</Text>
-                            </View>
-                            <View style={{alignItems: 'center', justifyContent: 'center', width: '25%'}}>
-                                <Text style={{fontFamily: 'jbold', fontSize: 21, color: '#000'}}>${item.amount}</Text>
-                            </View>
-                        </View> 
-                     )
-                }}  
-            />  */}
+            <ListBox otherStyles={{marginTop: 10}}>
+                <FlatList 
+                    style = {{width: '100%'}} 
+                    data={pastMonths}
+                    ListEmptyComponent={
+                        <View style={{alignItems:'center', justifyContent: 'center', padding: 15}}>
+                            <Text style={{fontSize: 18, fontFamily: 'jreg', color: 'black', textAlign: 'center', marginBottom: 15}}>Not Enough Data</Text>
+                            <Loading/>
+                        </View>  
+                    }
+                    keyExtractor={item => item.id}
+                    renderItem={({item}) => {
+                        return (
+                            <View style={{flexDirection: 'row', height: 70, width: '100%', borderBottomColor: '#000', borderBottomWidth: .5, padding: 15}}>
+                                <View style={{backgroundColor: item.amount < 0 ? ('red') : ('green'), height: 40, width: 40, borderRadius: 40/2, marginRight: 15, alignItems: 'center', justifyContent: 'center'}}/>
+                                <View style={{flexDirection: 'column', justifyContent: 'space-around', width: '60%' }}>
+                                    <Text style={{fontFamily: 'jbold', fontSize: 21, color: '#000'}}>{months[item.month]}</Text>
+                                    <Text style={{fontFamily: 'jreg', fontSize: 12, color: '#555'}}>{item.description}</Text>
+                                </View>
+                                <View style={{alignItems: 'center', justifyContent: 'center', width: '25%'}}>
+                                    <Text style={{fontFamily: 'jbold', fontSize: 21, color: '#000'}}>${item.amount}</Text>
+                                </View>
+                            </View> 
+                        )
+                    }}  
+                /> 
+            </ListBox>
                 
             <View style = {[styles.profit, {top: 110}]}>
                 <Text style = {styles.income_text}>Yearly Income:</Text>
@@ -404,45 +414,7 @@ export default function Years ({navigation}) {
 
 // All styles for the Years page
 const styles = StyleSheet.create({
-    banner: {
-        flexDirection: 'row',
-        height: '16%',
-        width: '100%',
-        backgroundColor: Colors.primary,
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderBottomLeftRadius: 30,
-        borderBottomRightRadius: 30,
-    },
-    visual: {
-        flexDirection: 'row',
-        height: '25%',
-        width: '85%',
-        backgroundColor: Colors.lightPrime,
-        marginTop: 20,
-        borderRadius: 20,
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingTop: 10,
-    },
-    list: {
-        height: '55%',
-        width: '85%',
-        marginTop: 10,
-        borderRadius: 20,
-        flexDirection: 'column',
-        backgroundColor: Colors.lightPrime,
-        borderTopRightRadius: 25,
-        borderTopLeftRadius: 25,
-    },
-    newList: {
-        backgroundColor: Colors.lightPrime,
-        width: '85%',
-        height: 90,
-        marginBottom: 10,
-        padding: 8,
-        borderRadius: 15,
-    },
+
     add: {
         height: '90%',
         width: '45%',

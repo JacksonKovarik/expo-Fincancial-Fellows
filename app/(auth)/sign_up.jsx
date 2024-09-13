@@ -55,10 +55,8 @@ export default function Sign_Up(){
   const onSignUpPressed = async (data) => {
     dispatch(setUserLoading(true));
     try{
-      console.log("Made it\n" + data.email + "\n" + data.password)
       await createUserWithEmailAndPassword(auth, data.email, data.password);
       setUser(data)
-      console.log(user)
     }catch (err) {
       if(err.code === 'auth/email-already-in-use'){
         Alert.alert("Error:", "Account already exists")
@@ -75,7 +73,6 @@ export default function Sign_Up(){
   // Navigates to Sign-In page if 'Sign-In' button is pressed
     const onSignInPressed = () => {
       router.push('/sign_in')
-      console.log("Passed")
     }
 
   return (  

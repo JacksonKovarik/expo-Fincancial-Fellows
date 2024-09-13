@@ -1,11 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { 
     View, 
     Text, 
     ImageBackground, 
     StyleSheet, 
     FlatList, 
-    Pressable, 
     LogBox
 } from "react-native";
 import background from "@/assets/images/Bottom_Background.png"
@@ -41,8 +40,6 @@ export default function Years ({navigation}) {
     // Boolean based on if the screen is in focus or not
     const isFocused = useIsFocused();
 
-    const ref = useRef(null)
-
     // Information needed for the linechart and screen data
     const [max, setMax] = useState(0)
     const [nums, setNums] = useState([])
@@ -50,7 +47,6 @@ export default function Years ({navigation}) {
     const [yearlyIncome, setYearlyIncome] = useState(0)
     const [yearlyProfit, setYearlyProfit] = useState(0)
     const [chartVisible, setChartVisible] = useState(false)
-    let completeData = []
 
     // Lets the app know if the screen was refreshed
     const [refresh, setRefresh] = useState(false);
@@ -110,7 +106,6 @@ export default function Years ({navigation}) {
                         dispatch(setPastMonths(newest))
                     }
                     dispatch(setCurrentMonthTrans(currTrans))
-                    console.log("CURRENT",currentMonthTrans, pastMonths)
                 }else if(total != currentMonthTrans[0].amount || inc != currentMonthTrans[0].income || (((total/inc)*100).toFixed(0) != currentMonthTrans[0].saved && inc != 0)) {
                     // New transactions have been made
                     currTrans.push({
@@ -133,7 +128,6 @@ export default function Years ({navigation}) {
                 let amt = [];
                 let last = 0;
                 let income = 0;
-                //console.log(currentMonthTrans)
                 let done = false;
                 while(!done){
                     
@@ -179,7 +173,6 @@ export default function Years ({navigation}) {
                     amt.unshift(0);
                     newMonth -= 1;
                 }
-                console.log(amt)
                 setYearlyIncome(currentMonthTrans[0].income)
                 setMonthVals(vals);
                 setNums(amt);
@@ -205,11 +198,9 @@ export default function Years ({navigation}) {
                 newNums += nums[i]
             }
             setYearlyProfit(newNums)
-            // console.log(yearlyProfit)
         }else {
             dispatch(setYearly([]));
         }
-        console.log(yearly)
     }
 
     // Refreshes the screens to fetch new stats

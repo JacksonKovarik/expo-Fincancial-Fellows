@@ -11,10 +11,6 @@ import { auth } from "@/config/firebase";
 
 export default function DrawerLayout() {
 
-    // const onLogOutPressed = async () => {
-    //     await signOut(auth);
-    // }
-
     const onLogOutPressed = async () => {
         await signOut(auth);
         router.push('/get_started')

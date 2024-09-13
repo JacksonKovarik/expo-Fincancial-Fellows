@@ -43,7 +43,7 @@ import ListBox from '@/components/listBox';
 
 export default function Monthly () {
 
-    // LogBox.ignoreAllLogs();
+    LogBox.ignoreAllLogs();
 
     const navigation = useNavigation();
 
@@ -129,11 +129,8 @@ export default function Monthly () {
     const [refresh, setRefresh] = useState(false)
     const onRefresh = () => {
         setRefresh(true)
-        console.log("refresh")
         fetchTransaction();
         fetchMonthly();
-        // fetchPastMonths();
-        console.log(pastMonths, currentMonthTrans)
         setTimeout ( () => {
             setRefresh(false)
         }, 500)
@@ -159,8 +156,7 @@ export default function Monthly () {
                     date: Date(),
                     dayOfWeek: Number(new Date().getDay()),
                     dayOfMonth: Number(new Date().getDate()),
-                    // month: Number(new Date().getMonth()),
-                    month: 9,
+                    month: Number(new Date().getMonth()),
                     year: Number(new Date().getFullYear()),
                     userID: user.uid
                 });
@@ -193,8 +189,7 @@ export default function Monthly () {
                     date: Date(),
                     dayOfWeek: Number(new Date().getDay()),
                     dayOfMonth: Number(new Date().getDate()),
-                    // month: Number(new Date().getMonth()),
-                    month: 5,
+                    month: Number(new Date().getMonth()),
                     year: Number(new Date().getFullYear()),
                     userID: user.uid
                 });
@@ -294,75 +289,15 @@ export default function Monthly () {
         const unsub = onSnapshot(q, (querySnapshot) => {
             let data = []
             querySnapshot.forEach(doc => {
-                // console.log({...doc.data()})
                 data.push({...doc.data(), })
             });
-            // console.log("data", data);
             dispatch(setTransactions(data));
-            // console.log(transactions);
             setTimeout( () => {
                 fetchMonthly();
-                // fetchPastMonths();
             }, 1000)
            
         })        
     };
-
-    // Sorts through transactions and gathers information on the months of the year
-    // const fetchPastMonths = () => {
-    //     if (monthly.length > 0) {
-    //         let past = []
-    //         let currTrans = []
-
-    //         let inc = 0
-    //         let exp = 0
-    //         let total = 0 
-
-    //             for (i in monthly){                
-    //                 total += monthly[i].amount
-    //                 if (monthly[i].name == 'Income') {
-    //                     inc += monthly[i].amount
-    //                 }else {
-    //                     exp += monthly[i].amount
-    //                 }
-    //             } 
-
-    //             if(currentMonthTrans.length < 1 || monthly[0].month != currentMonthTrans[0].month){
-    //                 // New Month
-    //                 let saved = 0
-    //                 {
-    //                     total > 0 ? 
-    //                     (  saved = (total/inc)*100) : 
-    //                     ( saved = 0 )
-    //                 }
-                    
-    //                 currTrans.push({
-    //                     income: inc,
-    //                     amount: total,
-    //                     saved: saved.toFixed(0),
-    //                     month: monthly[0].month,
-    //                 })
-    //                 console.log(currTrans)
-    //                 if(currentMonthTrans.length > 0){
-    //                     past.push(...currentMonthTrans)
-    //                     let newest = []
-    //                     newest.push(...past, ...pastMonths)
-    //                     dispatch(setPastMonths(newest))
-    //                 }
-    //                 dispatch(setCurrentMonthTrans(currTrans))
-    //                 console.log("CURRENT",currentMonthTrans, pastMonths)
-    //             }else if(total != currentMonthTrans[0].amount || inc != currentMonthTrans[0].income || (((total/inc)*100).toFixed(0) != currentMonthTrans[0].saved && inc != 0)) {
-    //                 // New transactions have been made
-    //                 currTrans.push({
-    //                     income: inc,
-    //                     amount: total,
-    //                     saved: inc != 0 ?((total/inc)*100).toFixed(0):(0),
-    //                     month: monthly[0].month,
-    //                 })
-    //                 dispatch(setCurrentMonthTrans(currTrans))
-    //             }
-    //     }        
-    // }
     
 
     // Runs the functions inside

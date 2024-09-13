@@ -26,7 +26,7 @@ export default function Get_Started() {
                     style = {( {pressed} ) => [ {backgroundColor: pressed ? Colors.secondary : Colors.primary}, styles.button ]}
                     android_ripple={{color: Colors.primary}}
                 >
-                    <Text style={[styles.text, {color:'#fff'}]}>Get Started</Text>
+                    <Text style={[styles.text, {color:'#fff', fontSize: 20}]}>Get Started</Text>
                 </Pressable>
             </View>
             <View style = {{position: 'absolute'}}><Top_Circle/></View>

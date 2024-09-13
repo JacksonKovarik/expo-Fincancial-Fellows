@@ -4,7 +4,6 @@ import {
   Text,
   View,
   ImageBackground,
-  Pressable,
   FlatList,
   LogBox,
 } from 'react-native';

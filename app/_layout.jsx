@@ -1,11 +1,9 @@
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
-import { Provider, useDispatch, useSelector } from "react-redux";
+import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 
 import { store, persistor } from '@/context/store'
-import { setUser } from "@/context/slices/user_information";
-import { onAuthStateChanged } from "firebase/auth";
 import Loading from "@/components/Loading";
 
 export default function RootLayout() {

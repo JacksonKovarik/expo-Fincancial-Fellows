@@ -1,4 +1,3 @@
-import background from "@/assets/images/Bottom_Background.png"
 import React, { useEffect, useState } from "react";
 import { 
     View, 
@@ -14,10 +13,13 @@ import {
 import DropDownPicker from "react-native-dropdown-picker";
 import { useIsFocused } from "@react-navigation/native";
 
-// App utilities from the 'utils' folder
+// App utilities from the 'components' or 'constants folder
 import { Colors } from "@/constants/Colors"; 
 import CustomInput from "@/components/CustomInput";
 import Loading from "@/components/Loading";
+import background from "@/assets/images/Bottom_Background.png"
+import InfoBox from "@/components/infoBox";
+import ListBox from "@/components/listBox";
 
 // Firebase Databse
 import { addDoc, deleteDoc, doc, getDocs, orderBy, query, where } from "firebase/firestore";
@@ -32,11 +34,10 @@ import Banner from "@/components/Banner";
 // Redux
 import { useDispatch, useSelector } from "react-redux";
 import { setTargets } from "@/context/slices/user_budgets";
-import InfoBox from "@/components/infoBox";
-import ListBox from "@/components/listBox";
 
 
-export default function Budget ({navigation}) {
+
+export default function Budget () {
 
     LogBox.ignoreAllLogs();
 
@@ -164,9 +165,7 @@ export default function Budget ({navigation}) {
         const docRef = (doc(db, 'budgets', val.id));
         console.log(val.id)
         try {
-          await deleteDoc(docRef)
-          console.log("Entire Document has been deleted successfully.");
-          
+          await deleteDoc(docRef)          
         } catch(ex) {
           console.log(ex); 
         }
@@ -230,7 +229,6 @@ export default function Budget ({navigation}) {
             data.push({...doc.data(), id: doc.id, })
         });
         dispatch(setTargets(data))
-        //console.log(targets)
 
         
         if (targets.length > 0){
@@ -355,7 +353,6 @@ export default function Budget ({navigation}) {
                         <Text style={styles.modalText}>Choose a Category!</Text>
                         <DropDownPicker 
                             value={budget}
-                            //stickyHeader={true}
                             items={items}
                             setItems={setItems}
                             setValue={setBudget}

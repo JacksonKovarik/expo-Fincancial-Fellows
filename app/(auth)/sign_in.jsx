@@ -7,7 +7,7 @@ import {
   Alert,
 } from 'react-native';
 
-// Utilities from 'utils' folder
+// Utilities from 'components' or 'constants' folder
 import Top_Circle from "@/components/TopCircles";
 import Bottom_Circle from "@/components/BottomCircles";
 import CustomInput from '@/components/CustomInput';
@@ -26,9 +26,6 @@ import { auth } from '@/config/firebase';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUserLoading } from '@/context/slices/user_information';
 
-// FontAwesome images
-// import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'; 
-// import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -59,10 +56,6 @@ export default function Sign_In(){
     }
     dispatch(setUserLoading(false));  
   }
-
-    const onSignInInPress = () => {
-        router.push('/monthly')
-    }
 
   // App Navigation
   const onBackPress = () => {

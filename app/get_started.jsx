@@ -1,10 +1,8 @@
 import Bottom_Circle from "@/components/BottomCircles";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
 import Top_Circle from "@/components/TopCircles";
 import { Colors } from "@/constants/Colors";
 import { router } from "expo-router";
-import { Image, Pressable, StyleSheet, View } from "react-native";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 
 export default function Get_Started() {    
     // Handles the 'Get Started' button press
@@ -15,25 +13,25 @@ export default function Get_Started() {
     }
     
     return(
-        <ThemedView style = {{flex: 1}}>
+        <View style = {{flex: 1, backgroundColor: '#fff'}}>
             <View style = {styles.body}>
                 <Image
                     style = {styles.image}  
                     source={require('@/assets/images/GetStarted.png')}
                 />
-                <ThemedText type="title">Financial</ThemedText>
-                <ThemedText type="title">Fellows</ThemedText>
+                <Text style={styles.text}>Financial</Text>
+                <Text style={styles.text}>Fellows</Text>
                 <Pressable
                     onPress={onPressFunction}
                     style = {( {pressed} ) => [ {backgroundColor: pressed ? Colors.secondary : Colors.primary}, styles.button ]}
                     android_ripple={{color: Colors.primary}}
                 >
-                    <ThemedText type="primaryButton">Get Started</ThemedText>
+                    <Text style={[styles.text, {color:'#fff'}]}>Get Started</Text>
                 </Pressable>
             </View>
             <View style = {{position: 'absolute'}}><Top_Circle/></View>
             <View><Bottom_Circle/></View>
-          </ThemedView>
+          </View>
   );
 }
 

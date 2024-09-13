@@ -30,6 +30,7 @@ import { setUserLoading } from '@/context/slices/user_information';
 // import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'; 
 // import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { router } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 
 
 
@@ -47,10 +48,7 @@ export default function Sign_In(){
     
     dispatch(setUserLoading(true));
     try{
-      console.log("In")
       await signInWithEmailAndPassword(auth, data.email, data.password);
-      Alert.alert("Success", "You did it!")
-      console.log("passed")
     }catch(err) {
       console.log(err.code)
       if(err.code === 'auth/invalid-credential'){
@@ -63,7 +61,6 @@ export default function Sign_In(){
   }
 
     const onSignInInPress = () => {
-        console.log("Passed")
         router.push('/monthly')
     }
 
@@ -71,9 +68,9 @@ export default function Sign_In(){
   const onBackPress = () => {
     router.back;
   }
+ 
   const onForgotPasswordPress = () => {
-    // navigation.navigate('Forgot Password Email');
-    console.log("Passed")
+    console.log("FPP")
   }
 
 
@@ -130,11 +127,6 @@ export default function Sign_In(){
             />
           )
         }
-        <CustomButton
-            onPress={onSignInInPress}
-            value = 'Sign In'
-            type='SECONDARY'
-        />
       </View>
 
 
@@ -143,9 +135,9 @@ export default function Sign_In(){
 
       <View style = {styles.back}>
         
-        {/* <TouchableOpacity onPress={onBackPress}>
-          <FontAwesomeIcon icon={faArrowLeft} size={30}/>
-        </TouchableOpacity> */}
+        <TouchableOpacity onPress={onBackPress}>
+          <Ionicons name={'arrow-back'} size={30}/>
+        </TouchableOpacity> 
 
       </View>
     </SafeAreaView>

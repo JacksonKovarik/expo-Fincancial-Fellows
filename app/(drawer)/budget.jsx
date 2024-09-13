@@ -20,22 +20,20 @@ import CustomInput from "@/components/CustomInput";
 import Loading from "@/components/Loading";
 
 // Firebase Databse
-// import { addDoc, deleteDoc, doc, getDocs, orderBy, query, where } from "firebase/firestore";
-// import { budgetRef, db } from "../../../config/firebase";
+import { addDoc, deleteDoc, doc, getDocs, orderBy, query, where } from "firebase/firestore";
+import { budgetRef, db } from "@/config/firebase";
 
 // React-Hook-Form
 import { useForm } from "react-hook-form";
-
-// FontAwesome icons
-// import { faAppleWhole, faBars, faDollarSign, faGasPump, faGem, faHouse, faMoneyBillTransfer, faRefresh, faShoppingCart } from "@fortawesome/free-solid-svg-icons";
-// import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
 import { Ionicons } from "@expo/vector-icons";
 import Banner from "@/components/Banner";
 
 // Redux
-// import { useDispatch, useSelector } from "react-redux";
-// import { setTargets } from "../../redux/slices/user_budgets";
+import { useDispatch, useSelector } from "react-redux";
+import { setTargets } from "@/context/slices/user_budgets";
+import InfoBox from "@/components/infoBox";
+import ListBox from "@/components/listBox";
 
 
 export default function Budget ({navigation}) {
@@ -57,10 +55,10 @@ export default function Budget ({navigation}) {
     const [loading, setLoading] = useState(false)
 
     // Global variables that remember their values from the last use using Redux
-    // const {user} = useSelector(state => state.user)
-    // const {monthly} = useSelector(state => state.persistTransaction)
-    // const {targets} = useSelector(state => state.persistTarget)
-    // const dispatch = useDispatch()
+    const {user} = useSelector(state => state.user)
+    const {monthly} = useSelector(state => state.persistTransaction)
+    const {targets} = useSelector(state => state.persistTarget)
+    const dispatch = useDispatch()
 
 
     // Variables for all of the amounts paid towards a budgets 
@@ -162,158 +160,152 @@ export default function Budget ({navigation}) {
     }
 
     // Handles if a budget transaction needs to be deleted from the database
-    // const removeFromFirestore = async (val) => {
-    //     const docRef = (doc(db, 'budgets', val.id));
-    //     console.log(val.id)
-    //     try {
-    //       await deleteDoc(docRef)
-    //       console.log("Entire Document has been deleted successfully.");
+    const removeFromFirestore = async (val) => {
+        const docRef = (doc(db, 'budgets', val.id));
+        console.log(val.id)
+        try {
+          await deleteDoc(docRef)
+          console.log("Entire Document has been deleted successfully.");
           
-    //     } catch(ex) {
-    //       console.log(ex); 
-    //     }
-    // }
-
-    // Handles when a budget transaction is added to the database
-    // const handleAdd = async(target) => {
-    //     try{
-    //         let doc = await addDoc( budgetRef, {
-    //             name: budget,
-    //             target: Number(target),
-    //             userID: user.uid
-    //         });
-    //         setLoading(false);
-    //         if(doc && doc.id){
-    //             setModalVisible(false)
-    //         }
-    //     }catch(err) {
-    //         console.log(err)
-    //         Alert.alert("Error:", "Something went wrong")
-    //         setModalVisible(false)
-    //         setLoading(false);
-
-    //     }
-    // }
-    const handleAdd = () => {
-        setModalVisible(false);
-        console.log("added");
+        } catch(ex) {
+          console.log(ex); 
+        }
     }
 
-    // const handlePress = async (data) => {
-    //     setLoading(true);
-    //     let exists = false;
-    //     let target = data.amount
-    //     let previous = targets.find(item => item.name == budget)
-    //     if (previous == null) {
-    //         console.log(true)
-    //         handleAdd(target)
-    //     }else {
-    //         console.log(false)
-    //         Alert.alert("Error", "Already have this budget, would you like to update?", [
-    //             {
-    //               text: 'No',
-    //               onPress: () => { exists = true; setModalVisible(false)},
-    //               style: 'cancel',
-    //             },
-    //             {
-    //                 text: 'OK', 
-    //                 onPress: () => { exists = true, removeFromFirestore(previous); handleAdd(target);}  
-    //             },
-    //         ]);
-    //     }
+    // Handles when a budget transaction is added to the database
+    const handleAdd = async(target) => {
+        try{
+            let doc = await addDoc( budgetRef, {
+                name: budget,
+                target: Number(target),
+                userID: user.uid
+            });
+            setLoading(false);
+            if(doc && doc.id){
+                setModalVisible(false)
+            }
+        }catch(err) {
+            console.log(err)
+            Alert.alert("Error:", "Something went wrong")
+            setModalVisible(false)
+            setLoading(false);
 
-    //     setLoading(false);
-    // }
+        }
+    }
 
-    const handlePress = () => {
+    const handlePress = async (data) => {
         setLoading(true);
-        console.log('Pressed');
-        setTimeout ( () => {
-        }, 500)
+        let exists = false;
+        let target = data.amount
+        let previous = targets.find(item => item.name == budget)
+        if (previous == null) {
+            console.log(true)
+            handleAdd(target)
+        }else {
+            console.log(false)
+            Alert.alert("Error", "Already have this budget, would you like to update?", [
+                {
+                  text: 'No',
+                  onPress: () => { exists = true; setModalVisible(false)},
+                  style: 'cancel',
+                },
+                {
+                    text: 'OK', 
+                    onPress: () => { exists = true, removeFromFirestore(previous); handleAdd(target);}  
+                },
+            ]);
+        }
+
         setLoading(false);
     }
 
+
     // Retrieves the budget data from the Firebase databse
-    // const fetchBudgets = async () => {
+    const fetchBudgets = async () => {
 
-    //     const q = query(budgetRef, where("userID", "==", user.uid), orderBy('name', 'desc'));
-    //     const querySnapshot = await getDocs(q);
-    //     let data = []
-    //     querySnapshot.forEach(doc => {
-    //         data.push({...doc.data(), id: doc.id, })
-    //     });
-    //     dispatch(setTargets(data))
-    //     //console.log(targets)
+        const q = query(budgetRef, where("userID", "==", user.uid), orderBy('name', 'desc'));
+        const querySnapshot = await getDocs(q);
+        let data = []
+        querySnapshot.forEach(doc => {
+            data.push({...doc.data(), id: doc.id, })
+        });
+        dispatch(setTargets(data))
+        //console.log(targets)
 
         
-    //     if (targets.length > 0){
-    //         for(i in targets) {
-    //             Name = targets[i].name;
-    //             Amount = targets[i].target;
+        if (targets.length > 0){
+            for(i in targets) {
+                Name = targets[i].name;
+                Amount = targets[i].target;
     
-    //             if('Shopping' == Name){
-    //                 setTargetShop(Amount);
-    //             }else if('Fuel' == Name){
-    //                 setTargetFuel(Amount);
-    //             }else if('Rent' == Name){
-    //                 setTargetRent(Amount);
-    //             }else if('Bills' == Name){
-    //                 setTargetBills(Amount);
-    //             }else if('Food & Drink' == Name){
-    //                 setTargetFood(Amount);
-    //             }else if('Other' == Name){
-    //                 setTargetOther(Amount);
-    //             };
-    //         }
-    //     }else {
-    //         setTargetShop(0);  
-    //         setTargetFuel(0);
-    //         setTargetRent(0);
-    //         setTargetBills(0);
-    //         setTargetFood(0);
-    //         setTargetOther(0);
-    //     }
+                if('Shopping' == Name){
+                    setTargetShop(Amount);
+                }else if('Fuel' == Name){
+                    setTargetFuel(Amount);
+                }else if('Rent' == Name){
+                    setTargetRent(Amount);
+                }else if('Bills' == Name){
+                    setTargetBills(Amount);
+                }else if('Food & Drink' == Name){
+                    setTargetFood(Amount);
+                }else if('Other' == Name){
+                    setTargetOther(Amount);
+                };
+            }
+        }else {
+            setTargetShop(0);  
+            setTargetFuel(0);
+            setTargetRent(0);
+            setTargetBills(0);
+            setTargetFood(0);
+            setTargetOther(0);
+        }
         
+        setShopping(0);
+        setFuel(0);
+        setRent(0);
+        setBills(0);
+        setFood(0);
+        setOther(0);
+        let shop = 0
+        let gas = 0
+        let bill = 0
+        let ren = 0
+        let foo = 0
+        let oth = 0
 
-    //     let shop = 0
-    //     let gas = 0
-    //     let bill = 0
-    //     let ren = 0
-    //     let foo = 0
-    //     let oth = 0
+        for(i in monthly) {
+            Name = monthly[i].name;
+            Amount = monthly[i].amount;
 
-    //     for(i in monthly) {
-    //         Name = monthly[i].name;
-    //         Amount = monthly[i].amount;
-
-    //         if('Shopping' == Name){
-    //             shop -= Amount;
-    //             setShopping(shop);
-    //         }else if('Fuel' == Name){
-    //             gas -= Amount;
-    //             setFuel(gas);
-    //         }else if('Rent' == Name){
-    //             ren -= Amount;
-    //             setRent(ren);
-    //         }else if('Bills' == Name){
-    //             bill -= Amount;
-    //             setBills(bill);
-    //         }else if('Food & Drink' == Name){
-    //             foo -= Amount;
-    //             setFood(foo);
-    //         }else if(('Other' || null) == Name){
-    //             oth -= Amount;
-    //             monthly[i].name = 'Other';
-    //             setOther(oth);
-    //         };
+            if('Shopping' == Name){
+                shop -= Amount;
+                setShopping(shop);
+            }else if('Fuel' == Name){
+                gas -= Amount;
+                setFuel(gas);
+            }else if('Rent' == Name){
+                ren -= Amount;
+                setRent(ren);
+            }else if('Bills' == Name){
+                bill -= Amount;
+                setBills(bill);
+            }else if('Food & Drink' == Name){
+                foo -= Amount;
+                setFood(foo);
+            }else if(('Other' || null) == Name){
+                oth -= Amount;
+                monthly[i].name = 'Other';
+                setOther(oth);
+            };
             
-    //     }
-    // };
+        }
+    };
 
     // Refreshes the screens to fetch new stats
     const onRefresh = () => {
         setRefresh(true);
-        // fetchBudgets();
+        fetchBudgets();
         setTimeout ( () => {
             setRefresh(false)
         }, 500)
@@ -323,7 +315,7 @@ export default function Budget ({navigation}) {
     // Calls fetchBudget() when the screen comes into focus
     useEffect (() => {
         if (isFocused) {
-            // fetchBudgets();
+            fetchBudgets();
         }
         
     }, [isFocused])
@@ -338,7 +330,7 @@ export default function Budget ({navigation}) {
             setVal('over');
         }
         return (    
-            <View style={{flexDirection: 'row', alignItems: 'left', width: '50%', justifyContent: 'center', marginTop: 15}}>
+            <View style={{flexDirection: 'row', alignItems: 'left', width: '50%', justifyContent: 'center', marginTop: 20}}>
                 <Text style={{fontSize: 17, color: Colors.black, fontFamily: 'jbold'}}>{name}: </Text><Text style={[{fontSize: 15, fontFamily: 'jreg'}, val == 'over' ? ({color: 'red',}) : ({color: 'rgb(0,180,0)',})]}>${left} {val}</Text>
             </View>
         )
@@ -410,11 +402,11 @@ export default function Budget ({navigation}) {
                 <Banner title={"Budgets"} onRefresh={onRefresh} />
             
             
-                <View style = {[styles.visual, {justifyContent: 'space-around', flexWrap: 'wrap'}]}>
+                <InfoBox otherStyles={{height: 'auto', justifyContent: 'space-around', flexWrap: 'wrap'}}>
                         {budgets.map(({name, amount, target}) => {
                             return <Legend name = {name} amount = {amount} target = {target} />
                         })}                    
-                </View>
+                </InfoBox>
 
                 
                 <Pressable 
@@ -424,43 +416,44 @@ export default function Budget ({navigation}) {
                     <Text style={{fontSize: 17, color: Colors.black, fontFamily: 'jbold'}}>Add/Edit Budget</Text>
                 </Pressable>
                 
+                <ListBox otherStyles={{marginTop: 0}}>
+                    <FlatList 
+                        style = {{width: '100%'}} 
+                        data={budgets}
+                        ListEmptyComponent={<Loading/>}
+                        keyExtractor={item => item.id}
+                        setWeeklyIncome={({item}) => { weeklyIncome + item.amount}}
+                        renderItem={({item}) => {
+                            return (
+                                <View style={{flexDirection: 'row', height: 70, width: '100%', borderBottomColor: '#000', borderBottomWidth: .5, padding: 15}}>
+                                    <View style={{backgroundColor: 'white', height: 40, width: 40, borderRadius: 40/2, marginRight: 15, alignItems: 'center', justifyContent: 'center'}}>
+                                                {/* <FontAwesomeIcon icon = {item.icon} size={25}/>  */}
+                                        <Ionicons name={item.icon} size={25} />
+                                    </View>
+                                    <View style={{flexDirection: 'column', justifyContent: 'space-around'}}>
+                                        <View style={{flexDirection: 'row', justifyContent: 'space-between', width: '90%'}}>
 
-                <FlatList 
-                    style = {styles.list} 
-                    data={budgets}
-                    ListEmptyComponent={<Loading/>}
-                    keyExtractor={item => item.id}
-                    setWeeklyIncome={({item}) => { weeklyIncome + item.amount}}
-                    renderItem={({item}) => {
-                        return (
-                            <View style={{flexDirection: 'row', height: 70, width: '100%', borderBottomColor: '#000', borderBottomWidth: .5, padding: 15}}>
-                                <View style={{backgroundColor: 'white', height: 40, width: 40, borderRadius: 40/2, marginRight: 15, alignItems: 'center', justifyContent: 'center'}}>
-                                            {/* <FontAwesomeIcon icon = {item.icon} size={25}/>  */}
-                                    <Ionicons name={item.icon} size={25} />
+                                            <View style={{flexDirection: 'column', justifyContent: 'space-around', width: 'auto' }}>
+                                                <Text style={{fontFamily: 'Judson-Bold', fontSize: 21, color: '#000'}}>{item.name}</Text>
+                                                <Text/>
+                                            </View>
+
+                                            <View style={{alignItems: 'center', justifyContent: 'center', width: 'auto'}}>
+                                                <Text style={{fontFamily: 'Judson-Bold', fontSize: 16, color: '#888'}}>${item.amount} of ${item.target}</Text>
+                                            </View>
+
+                                            
+                                        </View>
+
+                                        <View style={styles.bar}>
+                                            <View style={[{flex: 1, backgroundColor: Colors.lightSecondary }, item.amount >= item.target ? ({width: '100%'}) : ({width: item.percent})]}/>
+                                        </View>
+                                    </View> 
                                 </View>
-                                <View style={{flexDirection: 'column', justifyContent: 'space-around'}}>
-                                    <View style={{flexDirection: 'row', justifyContent: 'space-between', width: '90%'}}>
-
-                                        <View style={{flexDirection: 'column', justifyContent: 'space-around', width: 'auto' }}>
-                                            <Text style={{fontFamily: 'Judson-Bold', fontSize: 21, color: '#000'}}>{item.name}</Text>
-                                            <Text/>
-                                        </View>
-
-                                        <View style={{alignItems: 'center', justifyContent: 'center', width: 'auto'}}>
-                                            <Text style={{fontFamily: 'Judson-Bold', fontSize: 16, color: '#888'}}>${item.amount} of ${item.target}</Text>
-                                        </View>
-
-                                        
-                                    </View>
-
-                                    <View style={styles.bar}>
-                                        <View style={[{flex: 1, backgroundColor: Colors.lightSecondary }, item.amount >= item.target ? ({width: '100%'}) : ({width: item.percent})]}/>
-                                    </View>
-                                </View> 
-                            </View>
-                        )
-                    }}
-                />
+                            )
+                        }}
+                    />
+                </ListBox>
 
 
                 <View style = {[styles.profit, {top: 110}]}>
@@ -476,62 +469,6 @@ export default function Budget ({navigation}) {
 
 // All styles for the Budget page
 const styles = StyleSheet.create({
-    banner: {
-        flexDirection: 'row',
-        height: '16%',
-        width: '100%',
-        backgroundColor: Colors.primary,
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderBottomLeftRadius: 30,
-        borderBottomRightRadius: 30,
-    },
-    visual: {
-        flexDirection: 'row',
-        height: 'auto',
-        width: '85%',
-        backgroundColor: Colors.lightPrime,
-        marginTop: 20,
-        borderRadius: 20,
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingTop: 30,
-        paddingBottom: 20,
-    },
-    totalView: {
-        backgroundColor: Colors.white, 
-        width: 110, 
-        height: 50, 
-        borderRadius: 15, 
-        opacity: .9, 
-        alignItems: 'center', 
-        justifyContent: 'center'
-    },
-    list: {
-        height: '45%',
-        width: '85%',
-        borderRadius: 20,
-        flexDirection: 'column',
-
-        backgroundColor: Colors.lightPrime,
-    },
-    add: {
-        height: '90%',
-        width: '45%',
-        backgroundColor: Colors.lightSecondary,
-        opacity: .6,
-        borderRadius: 20,
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexDirection: 'column'
-    },
-    view: {
-        height: '75%',
-        width: '100%',
-        backgroundColor: Colors.lightSecondary,
-        opacity: .6,
-        borderRadius: 20,
-    },
     profit: {
         height: '7%',
         width: '80%',
@@ -551,16 +488,40 @@ const styles = StyleSheet.create({
         color: Colors.primary,
         fontSize: 24,
     },
+
+    // List
     bar: {
         backgroundColor: 'white',
         height: 6,
         width: '90%'
     },
+    description: {
+        height: 70,
+        width: '108%',
+        backgroundColor: 'white',
 
+        borderRadius: 10,
+        borderWidth: 1,
+        marginBottom: 15,
 
+        fontWeight: 'bold',
+        fontSize: 16,
+    },
 
+    // Button
+    button: {
+        borderRadius: 20,
+        padding: 10,
+        elevation: 2,
+        backgroundColor: '#2196F3'
+    },
 
-
+    // Modal Styles
+    modalText: {
+        marginBottom: 10,
+        color: Colors.black,
+        fontSize: 20,
+    },
     centeredView: {
         flex: 1,
         justifyContent: 'center',
@@ -590,36 +551,6 @@ const styles = StyleSheet.create({
         elevation: 5,
         
     },
-    description: {
-        height: 70,
-        width: '108%',
-        backgroundColor: 'white',
-
-        borderRadius: 10,
-        borderWidth: 1,
-        marginBottom: 15,
-
-        fontWeight: 'bold',
-        fontSize: 16,
-
-        
-    },
-    button: {
-        borderRadius: 20,
-        padding: 10,
-        elevation: 2,
-        backgroundColor: '#2196F3'
-    },
-    textStyle: {
-        color: 'white',
-        fontWeight: 'bold',
-        textAlign: 'center',
-    },
-    modalText: {
-        marginBottom: 10,
-        color: Colors.black,
-        fontSize: 20,
-    },
     icon: {
         width: 40, 
         height: 40, 
@@ -648,5 +579,10 @@ const styles = StyleSheet.create({
   
         fontWeight: 'bold', 
         fontSize: 16,
+    },
+    textStyle: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
     },
 })

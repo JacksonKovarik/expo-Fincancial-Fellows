@@ -6,6 +6,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import { store, persistor } from '@/context/store'
 import { setUser } from "@/context/slices/user_information";
 import { onAuthStateChanged } from "firebase/auth";
+import Loading from "@/components/Loading";
 
 export default function RootLayout() {
 
@@ -20,7 +21,7 @@ export default function RootLayout() {
 
   return (
     <Provider store={store}>
-      <PersistGate persistor={persistor}>
+      <PersistGate loading={<Loading/>} persistor={persistor}>
         <Stack screenOptions={{headerShown: false}} >
           <Stack.Screen name="index" />
           <Stack.Screen name="(auth)" />

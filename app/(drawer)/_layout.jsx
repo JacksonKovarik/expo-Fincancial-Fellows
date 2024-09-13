@@ -5,6 +5,8 @@ import { SafeAreaView, Text, TouchableOpacity, View } from "react-native";
 import { DrawerItemList } from "@react-navigation/drawer";
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { signOut } from "firebase/auth";
+import { auth } from "@/config/firebase";
 
 
 export default function DrawerLayout() {
@@ -13,7 +15,8 @@ export default function DrawerLayout() {
     //     await signOut(auth);
     // }
 
-    const onLogOutPressed = () => {
+    const onLogOutPressed = async () => {
+        await signOut(auth);
         router.push('/get_started')
     }
 

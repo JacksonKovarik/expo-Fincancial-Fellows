@@ -111,29 +111,20 @@ export default function Weekly ({navigation}) {
     
     // A state to let the app know if piechart should be visible
     const [pieChartVisible, setPieChartVisible] = useState(false)
-    // const chart = () => {
-    //     if(weekly.length != 0){
-    //         setPieChartVisible(true);
-    //     }else {
-    //         setPieChartVisible(false)
-    //     }
-    // }
+
 
 /*************************************************************************************/
 //                      Functions for the Weekly tab
 /*************************************************************************************/
 
 const fetchWeekly = () => {
-        
-    if(transactions.length > 0){
+    setPieChartVisible(false)
+    if(transactions.length != 0){
         let week = []
-        console.log("In weekly")
-        // Looks at the most recent transactions and puts all of the transactions from the current week in the 'weekly' array
-        for(i=transactions.length-1; i >= 0; i--) {
-            const currentTrans = transactions[i];
-            if (i > 0) {
-                const nextTrans = transactions[i-1];
-                
+        for(i=0; i<=transactions.length-1; i++) {
+            if (i < transactions.length-1){
+                const currentTrans = transactions[i];
+                const nextTrans = transactions[i+1];
                 const LDM = currentTrans.dayOfWeek - currentTrans.dayOfMonth
                 const diff1 = currentTrans.dayOfMonth - nextTrans.dayOfMonth
 
@@ -146,23 +137,31 @@ const fetchWeekly = () => {
                     break
                 }
             }else {
-                week.push(currentTrans)
+                week.push(transactions[i])
             }
-            
         }
-        console.log(weekly)
         dispatch(setWeekly(week));
-        setPieChartVisible(true);
         fetchStats();
-        console.log(weekly)
     }else {
         dispatch(setWeekly([]));
         setPieChartVisible(false);
+    }
+    for(i=0; i<weekly.length; i++){
+        if(weekly[i].amount < 0){
+            setPieChartVisible(true)
+            break
+        }
     }
 }
 
     // Retrieves needed weekly information from the transactions
     const fetchStats = () => {
+        setShopping(0);
+        setFuel(0);
+        setRent(0);
+        setBills(0);
+        setFood(0);
+        setOther(0);
         if(weekly.length != 0){
             let shop = 0
             let gas = 0
@@ -218,6 +217,7 @@ const fetchWeekly = () => {
     // Refreshes the screens to fetch new stats
     const onRefresh = () => {
         setRefresh(true);
+        fetchWeekly();
         fetchStats();
         setTimeout ( () => {
             setRefresh(false)
@@ -228,8 +228,8 @@ const fetchWeekly = () => {
     // Calls the 'fetchStats' function when the screen is focused
     useEffect(() => {
         if (isFocused) {
-            fetchStats();
             fetchWeekly();
+            fetchStats();
         }
             
     }, [isFocused])
@@ -326,14 +326,13 @@ const fetchWeekly = () => {
                         }
                         key={item => item.key}
                         setWeeklyIncome={({item}) => { weeklyIncome + item.amount}}
-                        renderItem={({item, key}) => {
+                        renderItem={({item}) => {
                             return (
                                 <View style={{flexDirection: 'row', height: 70, width: '100%', borderBottomColor: '#000', borderBottomWidth: .5, padding: 15}}>
                                     <View style={{backgroundColor: '#fff', height: 40, width: 40, borderRadius: 40/2, marginRight: 15, alignItems: 'center', justifyContent: 'center'}}>
                                         <Ionicons name={item.name == "Income"  ? ('card') : (
                                             record.find((records) => records.name == item.name).icon
                                         )} size={25} color={'#000'} />
-                                        {/* <Ionicons name='home' size={25} color={'#000'}/> */}
                                     </View>
                                     <View style={{flexDirection: 'column', justifyContent: 'space-around', width: '60%' }}>
                                         <Text style={{fontFamily: 'Judson-Bold', fontSize: 21, color: '#000'}}>{item.name}</Text>

@@ -142,12 +142,6 @@ export default function Sign_Up(){
           )
         }
 
-        {/* <CustomButton
-          value = 'Welcome'
-          onPress = {onSignInPressed}
-          type='PRIMARY'
-        />  */}
-
         <View style = {styles.horizontal}>
           <Text style = {styles.text}>
             Already have an acoount?

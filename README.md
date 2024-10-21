@@ -36,16 +36,17 @@ Financial Fellows is a mobile application originally written with the React-Nati
 0. Clone Repo
 
    '''bash
-   git clone
+   git clone https://github.com/JacksonKovarik/expo-Fincancial-Fellows.git
    cd expo-financial-fellows
+   '''
 
-1. Install dependencies
+2. Install dependencies
 
    ```bash
    npm install
    ```
 
-2. Start the app
+3. Start the app
 
    ```bash
     npx expo start

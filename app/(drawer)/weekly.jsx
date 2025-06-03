@@ -256,46 +256,48 @@ const fetchWeekly = () => {
 
                 {/* Where the pie chart is displayed */}
                 { pieChartVisible ? (
-                    <InfoBox>
-                        <PieChart
-                            data={record}
-                            donut
-                            showGradient
-                            strokeColor={Colors.lightPrime}
-                            strokeWidth={3}
-                            sectionAutoFocus
-                            radius={75}
-                            innerRadius={60}
-                            innerCircleColor={Colors.lightPrime}
-                            centerLabelComponent={() => {
-                                return (
-                                <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                                    <PieChart
-                                        data={record}
-                                        donut
-                                        showGradient
-                                        strokeColor={Colors.lightPrime}
-                                        strokeWidth={3}
-                                        sectionAutoFocus
-                                        radius={60}
-                                        innerRadius={52}
-                                        innerCircleColor={Colors.lightPrime}
-                                        centerLabelComponent={() => {
-                                            return (
-                                                <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                                                    <Text style={{color: '#000', fontFamily: 'jit', fontSize: 18}}>Expenses:</Text>
-                                                    <Text style={{color: '#000', fontFamily: 'jit', fontSize: 18}}>${weeklyExpenses}</Text>
-                                                </View>
-                                            );
-                                        }}
-                                        
-                                    />
-                                </View>
-                                );
-                            }}
-                            
-                        />
-
+                    <InfoBox otherStyles={{paddingTop: 30}}>
+                        <View style={{marginBottom: '13%'}}>
+                            <PieChart
+                                data={record}
+                                donut
+                                showGradient
+                                strokeColor={Colors.lightPrime}
+                                strokeWidth={3}
+                                sectionAutoFocus
+                                radius={75}
+                                innerRadius={60}
+                                innerCircleColor={Colors.lightPrime}
+                                
+                                centerLabelComponent={() => {
+                                    return (
+                                    <View style={{justifyContent: 'center'}}>
+                                        <PieChart
+                                            data={record}
+                                            donut
+                                            showGradient
+                                            strokeColor={Colors.lightPrime}
+                                            strokeWidth={3}
+                                            sectionAutoFocus
+                                            radius={60}
+                                            innerRadius={52}
+                                            innerCircleColor={Colors.lightPrime}
+                                            centerLabelComponent={() => {
+                                                return (
+                                                    <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                                                        <Text style={{color: '#000', fontFamily: 'jit', fontSize: 18}}>Expenses:</Text>
+                                                        <Text style={{color: '#000', fontFamily: 'jit', fontSize: 18}}>${weeklyExpenses}</Text>
+                                                    </View>
+                                                );
+                                            }}
+                                            
+                                        />
+                                    </View>
+                                    );
+                                }}
+                                
+                            />
+                        </View>
                         {/* Pie chart Legend */}            
                         <View style={{flex: 1,  alignItems: 'left', marginLeft: 40}}>
                             {record.map(({name, color}) => {

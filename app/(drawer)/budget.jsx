@@ -399,7 +399,7 @@ export default function Budget () {
                 <Banner title={"Budgets"} onRefresh={onRefresh} />
             
             
-                <InfoBox otherStyles={{height: 'auto', justifyContent: 'space-around', flexWrap: 'wrap'}}>
+                <InfoBox otherStyles={{height: 'auto', justifyContent: 'space-around', flexWrap: 'wrap', paddingTop: 15}}>
                         {budgets.map(({name, amount, target}) => {
                             return <Legend name = {name} amount = {amount} target = {target} />
                         })}                    

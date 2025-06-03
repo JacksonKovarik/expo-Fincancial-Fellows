@@ -451,7 +451,7 @@ export default function Monthly () {
                 <Banner title={'Monthly'} onRefresh={onRefresh}/>
 
                
-                <InfoBox otherStyles={{justifyContent: 'space-around'}}>
+                <InfoBox otherStyles={{justifyContent: 'space-around', alignItems: 'center'}}>
                     <View style={{alignItems: 'center'}}>
                         <Text style={{color: Colors.black, fontSize: 17}}>Income:</Text>
                         <View style={styles.totalView}>

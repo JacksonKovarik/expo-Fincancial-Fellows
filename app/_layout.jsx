@@ -20,6 +20,7 @@ export default function RootLayout() {
   return (
     <Provider store={store}>
       <PersistGate loading={<Loading/>} persistor={persistor}>
+      
         <Stack screenOptions={{headerShown: false}} >
           <Stack.Screen name="index" />
           <Stack.Screen name="(auth)" />

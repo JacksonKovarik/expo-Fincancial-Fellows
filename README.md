@@ -34,6 +34,7 @@ Financial Fellows is a mobile application originally written with the React-Nati
 ## Get started
 
 Must have [**Node.js**](https://nodejs.org/en) installed.
+>**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/set-up-your-environment) instructions till "Creating a new application" step, before proceeding.
 
 ### 0. Clone Repo
 
@@ -45,7 +46,7 @@ Must have [**Node.js**](https://nodejs.org/en) installed.
 ### 1. Install dependencies
 
    ```bash
-   npm install
+   npx expo install
    ```
 
 ### 2. Start the app
@@ -62,10 +63,4 @@ In the output, you'll find options to open the app in a
 - [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
 
 
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Project Demo

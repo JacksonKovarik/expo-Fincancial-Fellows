@@ -8,13 +8,13 @@ import { getAuth } from "firebase/auth";
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDgFpfohlUHzCFjNBaaNge3ASB39Um_3dE",
-  authDomain: "financial-fellows-expo.firebaseapp.com",
-  projectId: "financial-fellows-expo",
-  storageBucket: "financial-fellows-expo.appspot.com",
-  messagingSenderId: "423447915784",
-  appId: "1:423447915784:web:b3763777a4ce90102110bd",
-  measurementId: "G-4DFPSLJ6CN"
+  apiKey: [YOUR_KEY],
+  authDomain: [YOUR_AUTH_DOMAIN],
+  projectId: [YOUR_PROJECT_ID],
+  storageBucket: [YOUR_STORAGEBUCKET],
+  messagingSenderId: [YOUR_SENDER_ID],
+  appId: [YOUR_APP_ID],
+  measurementId: [YOUR_MEASUREMENT_ID]
 };
 
 // Initialize Firebase

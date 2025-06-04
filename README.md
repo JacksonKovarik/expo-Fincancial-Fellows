@@ -1,35 +1,58 @@
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
-
 # Financial Fellows
 
-## Project Description
+**A Cross-Platform Mobile App for Personal Expense Tracking and Visualization**
 
-### What is Financial Fellows
+---
 
-Financial Fellows is a mobile application originally written with the React-Native CLI for the user to keep track of their income and expenses while also being able to visualize the numbers with graphs and other visuals. This project is he migration over from React-Native CLI to React-Native Expo. With the clean and easy to navigate UI, Financial Fellows allows the user to have an easy and enjoyable in app experience.
+## Overview
 
-### Technologies Involved
+Financial Fellows is a modern, cross-platform mobile application designed to help users track their income, expenses, and budgets with ease. Built using React Native (Expo), Firebase, and Redux, the app offers secure authentication, real-time data sync, and interactive data visualization—all wrapped in a clean, user-friendly interface. Financial Fellows empowers users to take control of their finances on both iOS and Android devices.
 
-- **React-Native Expo**: This project was a beginner application into Expo to allow me to learn the language and I felt using Expo as opposed to React-Native CLI would allow for me to better React-Native and mobile development as a whole.
-- **Redux**: Used as an effective state-management tool for organization, scalability, and allow for better application debugging
-- **Firebase**: Used as a reliable and scalable database for the apps progression
--  **React-Hook-Form** : Used for the user inputs to improve the performance of Financial Fellows
+---
+
+## Features
+
+- **Expense & Income Tracking:** Log transactions and categorize them for better financial clarity.
+- **Budget Management:** Set, monitor, and adjust budgets to achieve your financial goals.
+- **Data Visualization:** Interactive charts and graphs provide instant insights into spending and saving patterns.
+- **Secure Authentication:** User accounts and data are protected using Firebase Authentication.
+- **Real-Time Sync:** All financial data is updated instantly across devices using Firebase Cloud Firestore.
+- **Responsive UI:** Designed in [**Figma**](https://www.figma.com/design/DZiugRCj9qfpXwO8C9kDAD/CPS-Final-Project?node-id=0-1&t=Jz9zaIBs0Xr3nxqy-1), the app follows Material Design principles for a seamless user experience.
+- **Efficient State Management:** Redux is used for scalable and maintainable state handling.
+- **Cross-Platform:** Runs smoothly on both iOS and Android via Expo.
+
+---
+
+## Technologies Used
+
+- **Frontend:** React Native (Expo), Redux, React Hook Form
+- **Backend/Database:** Firebase Authentication & Cloud Firestore
+- **Design:** Figma (UI/UX prototyping)
+- **Dev Tools:** GitHub, VS Code
+
+---
 
 <img src="https://miro.medium.com/v2/resize:fit:600/1*fQJ4KqHQIxUH9SiAaLev9Q.png" width="100" height="40">   <img src="https://miro.medium.com/v2/resize:fit:800/1*2dJ3D8gz4CVy3EtOJQNZvw.png" width="100" height="40">   <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxQktpK3Jy3GkxXutGPzl8R3OBCNMxfFWP5A&s" width="120" height="40">   <img src="https://miro.medium.com/v2/resize:fit:1400/1*gNqOZJUc38gktiKMV3fhrA.png" width="150" height="40" background-color="black">
 
-### Major Milestones Throughout The Project
+---
+## Major Milestones
 
-- Coming up with the idea:
-   - After being given the assignment to build a mobile app I knew I wanted to build a financial app but I just didn't know exactly what that would look like. As my first ever mobile application I knew I didn't want to go too crazy but I also wanted to learn as much as I could throughout development so I ended up deciding on an app for users to be able to track their money (incomes and expenses) as well as create budgets and be able to keep track of those.
-- The Software Development Lifecyle
-   - **Planning & Requirements Gathering**: With the help of my classmates I was able to devise a plan for how the app would function including functional and non-functional requirements, a short and data dictionary, use case diagrams with the proper use case descriptions, class diagrams, sequence diagrams, and other important factors within the planning stage. A PDF of the documentation for this step can be downloaded [**here**](https://github.com/user-attachments/files/15945230/Financial.Fellows.Phase.1.pdf).
-   - **Design**: As the team lead I was tasked with designing a clean and simple UI for the user's comfortability. Utilizing the design platform [**Figma**](https://figma.com), I was able to build out my idea for the mobile app UI creating each screen I wanted to display for the user to see. The _Figma_ design can be viewed [**here**](https://www.figma.com/design/BngkXcr9e0pMR72d8xZRB0/CIS-250-Financial-Fellows?node-id=0-1&t=56SaGrRq7HKajpEb-1).
-   - **Implementation & Testing**: Learning React-Native was the main goal of this project for me as it is a new and growing framework in the frontend development world. Throughout the entirety of the project I was learning React-Native as well as Redux, React-Hook-Form and also learning how to use and implement Firebase's database and authentication. While creating this, Financial Fellows had to go through and pass a multitude of different tests to make sure the app is functioning properly. To view some of the key methods and test cases you can download this PDF [**here**](https://github.com/user-attachments/files/15945295/Financial.Fellows.Part-3.pdf).
-   - **Deployment/Maintenance**: Financial Fellows was never deployed to the iOS App Store or the Android Google Play Store.
+- **Ideation & Planning:** Defined core features, use cases, and data models with team collaboration and documentation.
+- **Design:** Created a user-centric UI in Figma, emphasizing clarity and ease of use.
+- **Implementation:** Migrated from React Native CLI to Expo for improved developer experience and cross-platform support.
+- **Testing:** Developed and executed test cases to ensure reliability and performance.
+- [**Final Report:**](https://github.com/user-attachments/files/15945316/CIS.250.Final-Report.pdf) Comprehensive documentation and project report available in the repo.
 
-     
-- The Final Report: The final project report PDF can be downloaded [**here**](https://github.com/user-attachments/files/15945316/CIS.250.Final-Report.pdf).
+---
 
+## Project Structure
+
+- `/components` — Reusable UI components
+- `/screens` — Main app screens (Dashboard, Add Transaction, Budgets, etc.)
+- `/redux` — State management logic
+- `/assets` — Images and design assets
+
+---
 
 ## Get started
 
